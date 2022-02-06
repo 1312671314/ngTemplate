@@ -1,0 +1,26 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+
+<nz-modal [(nzVisible)]="isVisible" nzWidth="1000px" nzTitle="操作" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="运营中心名称" error="请输入运营中心名称!" required>
+                <input nz-input type="text" placeholder="请输入运营中心名称" [(ngModel)]="operation.name" name="name" />
+            </se>
+            <se label="选择省市区地区" error="选择省市区!" required>
+                <location-select [locationInfo]="location" [sizes]="8" (onLocationSelect)="onLocationSelect($event)">
+                </location-select>
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleAccount" nzWidth="1000px" nzTitle="运营中心子账号" [nzFooter]="null" (nzOnCancel)="onCancel()">
+    <ng-container *nzModalContent>
+        <table-template [dataList]="dataSet2" [theadList]="teadList2" [total]="total2" [pageIndex]="pageIndex2" [keyNameList]="keyNameList2" [pageSize]="pageSize2" (editFuncOut)="editFun2($event)"></table-template>
+    </ng-container>
+</nz-modal>

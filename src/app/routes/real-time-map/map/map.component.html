@@ -1,0 +1,351 @@
+<!-- 点击按钮可以放大或者缩小，查看地图上的任务 -->
+
+<!-- <full-content (fullscreenChange)="fullChange($event)">
+    <div style="position:absolute;z-index: 10;" [ngClass]="{'minClass': classFlag, 'maxClass': classFlag}" [ngStyle]="{'top':classFlag ? '40px' : '140px','left':classFlag ? '40px' : '220px' }">
+
+        <button nz-button [nzType]="'default'" full-toggle class="ml-sm">{{classFlag?'还 原':'全 屏'}}</button>
+    </div>
+    <div id="map" style="width:100%;height:100%">
+    </div>
+</full-content> -->
+
+<h3 style=" margin:0;height: 70px;font-weight: 100; ">
+    <span class="logo" style="position:relative;top:0px">
+            <img src="./assets/tmp/img/avatar.jpg" width="45px;" >
+        </span>
+    <div style="display: inline-block;padding-left: 20px;">
+        <div style="height: 70px;font-size: 22px;font-weight: bold;line-height: 70px;">
+            {{centerName}}
+        </div>
+        <!-- <div style="height: 30px;font-size: 12px;font-weight: 200;">
+            The Fire Digital Operation Platform of Xihu District,Hangzhou
+        </div> -->
+    </div>
+
+    <span style="float: right;font-size: 14px;display: inline-block; margin-right: 20px;margin-top: 30px;">
+        {{time | date:'yyyy-MM-dd hh:mm:ss'}}
+    </span>
+    <span *ngIf="weather" style="float: right;font-size: 14px;display: inline-block; margin-right: 20px;margin-top: 30px; font-weight:500;">
+        星期{{weekMap[weather.week]}} {{weather.dayWeather}}  
+        {{weather.nightTemp}}℃ -{{weather.dayTemp}}℃
+    </span>
+    <span style="float: right;font-size: 14px;display: inline-block; margin-right: 20px;margin-top: 30px;" *ngIf="guardDays">
+        系统护航时间:{{guardDays}}天
+    </span>
+
+    <span style="color: #1890ff;float: right;font-size: 14px;display: inline-block; margin-right: 20px;margin-top: 30px;font-weight: 400;" *ngIf="user">
+        值班人员:{{user.name}}({{user.charatarName}})
+    </span>
+    <!-- <div *ngIf="user" style="width: 260px; color: #1890ff;float: right;font-size: 14px;font-weight: 400; display: inline-block; margin-right: 20px;margin-top: 30px;">
+        <span style="display: inline-block;float: left;width:70px;">
+            值班人员：
+        </span>
+        <div class='notable-container'>
+            <div class="words">
+                {{user.name}}({{user.charatarName}})
+            </div>
+        </div>
+    </div> -->
+
+</h3>
+<div class="map-box">
+    <div class="box" style="display:flex; ">
+        <div style="flex:5; ">
+            <div class="map-box-left">
+                <div class="map-container" [ngStyle]="{'height':mapHeight}" [id]="containerId"></div>
+            </div>
+            <div class="list-box" [ngStyle]="{'height':tebleHeight}">
+                <h5 style="background: #fff;">
+                    <i class="anticon anticon-alert icon-p">
+                        <svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="alert" aria-hidden="true"><path d="M193 796c0 17.7 14.3 32 32 32h574c17.7 0 32-14.3 32-32V563c0-176.2-142.8-319-319-319S193 386.8 193 563v233zm72-233c0-136.4 110.6-247 247-247s247 110.6 247 247v193H404V585c0-5.5-4.5-10-10-10h-44c-5.5 0-10 4.5-10 10v171h-75V563zm-48.1-252.5l39.6-39.6c3.1-3.1 3.1-8.2 0-11.3l-67.9-67.9a8.03 8.03 0 00-11.3 0l-39.6 39.6a8.03 8.03 0 000 11.3l67.9 67.9c3.1 3.1 8.1 3.1 11.3 0zm669.6-79.2l-39.6-39.6a8.03 8.03 0 00-11.3 0l-67.9 67.9a8.03 8.03 0 000 11.3l39.6 39.6c3.1 3.1 8.2 3.1 11.3 0l67.9-67.9c3.1-3.2 3.1-8.2 0-11.3zM832 892H192c-17.7 0-32 14.3-32 32v24c0 4.4 3.6 8 8 8h688c4.4 0 8-3.6 8-8v-24c0-17.7-14.3-32-32-32zM484 180h56c4.4 0 8-3.6 8-8V76c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v96c0 4.4 3.6 8 8 8z"></path>
+                        </svg>
+                    </i> 实时警情 <span [class]="colorMap[message.accusativeType]">-{{messageText}} </span>
+                </h5>
+                <table style="padding-left: 10px;">
+                    <thead>
+                        <th>联网单位</th>
+                        <th>设备名称</th>
+                        <th>安装位置</th>
+                        <th>上报时间</th>
+                        <th>消息类型</th>
+                        <th>处理状态</th>
+                        <th>消防视频</th>
+                    </thead>
+                    <tbody style="background: #fff" class="firstCls">
+                        <tr *ngFor="let item of dataSet; let index = index" class="table-body" [ngClass]="{colorRed:(index==0 && isRed),colorOrange:(index==0 && isOrange)}">
+                            <td>
+                                {{item.orgName}}
+                            </td>
+                            <td>
+                                {{item.type}}
+                            </td>
+                            <td style="width: 100px;">
+                                <div *ngIf="item.place" class="check">{{item.place?item.place:"无"}}</div>
+                                <span nz-tooltip nzTooltipTitle="{{item.place}}" class="tooltip">{{item.place?item.place:"无"}}</span>
+                            </td>
+                            <td style="width: 100px;">
+                                {{item.lastReportTime | date:'MM/dd HH:mm:ss'}}
+                            </td>
+                            <td>
+                                {{item.name}}
+                            </td>
+                            <!-- class="checkRemark" -->
+                            <td>
+                                <!-- (mouseenter)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" -->
+                                <div *ngIf="item.check" class="check">{{item.checkRemark}}</div>
+                                <span nz-tooltip nzTooltipTitle="{{item.checkRemark}}" class="tooltip">{{item.checkRemark}}</span>
+                            </td>
+                            <td>
+                                <button nz-button (click)="showVideo()">
+                                    <!-- <i _ngcontent-docs-c140="" nz-icon="" class="anticon anticon-play-square"><svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="play-square" aria-hidden="true"><path d="M442.3 677.6l199.4-156.7a11.3 11.3 0 000-17.7L442.3 346.4c-7.4-5.8-18.3-.6-18.3 8.8v313.5c0 9.4 10.9 14.7 18.3 8.9z"></path><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"></path></svg></i> -->
+                                    视频</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h6 style="text-align: center; padding:20px 0; color: #313131;" *ngIf="dataSet && dataSet.length==0">
+                    <p style="padding-top: 10px;">暂无数据</p>
+                </h6>
+
+                <h6 style="text-align: center;  color: #313131;padding-top:70px;" *ngIf="dataSet && dataSet.length==0">
+                    <img src="./assets/noOrder.png" width="140px" />
+                </h6>
+
+                <audio src="./assets/alarm.mp3" id="alarm" controls="controls" loop="false" hidden="false">
+                </audio>
+                <!-- <button nz-button type="button" (click)="autoPlay()" value="">播放</button>
+                <button nz-button type="button" (click)="closePlay()" value="">关闭</button> -->
+            </div>
+
+            <!-- </nz-card> -->
+        </div>
+        <div style="flex: 5;">
+            <div class="list-box" style="padding-bottom:5px;" [ngStyle]="{'height':rightBoxHeight}">
+                <h6 style="font-size: 16px;">
+                    <i class="anticon anticon-alert icon-p">
+                        <i class="anticon anticon-insurance icon-p"><svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="insurance" aria-hidden="true"><path d="M441.6 306.8L403 288.6a6.1 6.1 0 00-8.4 3.7c-17.5 58.5-45.2 110.1-82.2 153.6a6.05 6.05 0 00-1.2 5.6l13.2 43.5c1.3 4.4 7 5.7 10.2 2.4 7.7-8.1 15.4-16.9 23.1-26V656c0 4.4 3.6 8 8 8H403c4.4 0 8-3.6 8-8V393.1a429.2 429.2 0 0033.6-79c1-2.9-.3-6-3-7.3zm26.8 9.2v127.2c0 4.4 3.6 8 8 8h65.9v18.6h-94.9c-4.4 0-8 3.6-8 8v35.6c0 4.4 3.6 8 8 8h55.1c-19.1 30.8-42.4 55.7-71 76a6 6 0 00-1.6 8.1l22.8 36.5c1.9 3.1 6.2 3.8 8.9 1.4 31.6-26.8 58.7-62.9 80.6-107.6v120c0 4.4 3.6 8 8 8h36.2c4.4 0 8-3.6 8-8V536c21.3 41.7 47.5 77.5 78.1 106.9 2.6 2.5 6.8 2.1 8.9-.7l26.3-35.3c2-2.7 1.4-6.5-1.2-8.4-30.5-22.6-54.2-47.8-72.3-76.9h59c4.4 0 8-3.6 8-8V478c0-4.4-3.6-8-8-8h-98.8v-18.6h66.7c4.4 0 8-3.6 8-8V316c0-4.4-3.6-8-8-8H476.4c-4.4 0-8 3.6-8 8zm51.5 42.8h97.9v41.6h-97.9v-41.6zm347-188.9L527.1 54.1C523 52.7 517.5 52 512 52s-11 .7-15.1 2.1L157.1 169.9c-8.3 2.8-15.1 12.4-15.1 21.2v482.4c0 8.8 5.7 20.4 12.6 25.9L499.3 968c3.5 2.7 8 4.1 12.6 4.1s9.2-1.4 12.6-4.1l344.7-268.6c6.9-5.4 12.6-17 12.6-25.9V191.1c.2-8.8-6.6-18.3-14.9-21.2zM810 654.3L512 886.5 214 654.3V226.7l298-101.6 298 101.6v427.6z"></path></svg></i>
+                    </i> 运营概况
+                </h6>
+                <nz-row class="header-box">
+                    <nz-col nzSpan="6">
+                        <p>
+                            保护建筑物
+                        </p>
+                        <span>
+                            {{roomsNumber}}
+                            <dd>间</dd>
+                        </span>
+                        <p>
+                            <span *ngIf="isUp" class="upCls" style="font-size:14px">
+                                <svg viewBox="64 64 896 896" style="color: red;" focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-up" aria-hidden="true"><path d="M868 545.5L536.1 163a31.96 31.96 0 00-48.3 0L156 545.5a7.97 7.97 0 006 13.2h81c4.6 0 9-2 12.1-5.5L474 300.9V864c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V300.9l218.9 252.3c3 3.5 7.4 5.5 12.1 5.5h81c6.8 0 10.5-8 6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="!isUp" style="font-size:14px">
+                                <svg viewBox="64 64 896 896"  style="color: rgb(5, 199, 92);"  focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-down" aria-hidden="true"><path d="M862 465.3h-81c-4.6 0-9 2-12.1 5.5L550 723.1V160c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v563.1L255.1 470.8c-3-3.5-7.4-5.5-12.1-5.5h-81c-6.8 0-10.5 8.1-6 13.2L487.9 861a31.96 31.96 0 0048.3 0L868 478.5c4.5-5.2.8-13.2-6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="isUp" style="color: ccc;font-size: 12px;" class="upCls">
+                                {{lastMonthNum}}%
+                            </span>
+                            <span *ngIf="!isUp" style="color: ccc;font-size: 12px;" class="downCls">
+                                {{lastMonthNum}}%
+                            </span>
+                            <span *ngIf="isUp" style="color: ccc;font-size: 12px;">
+                                较上个月增加
+                            </span>
+                            <span *ngIf="!isUp" style="color: ccc;font-size: 12px;">
+                                较上个月减少
+                            </span>
+                        </p>
+                    </nz-col>
+                    <nz-col nzSpan="6">
+                        <p>
+                            探测器总数
+                        </p>
+                        <span>
+                            {{deviceNum}}
+                            <dd>只</dd>
+                        </span>
+                        <p>
+                            <span *ngIf="isDeviceUp" class="upCls" style="font-size:14px">
+                                <svg viewBox="64 64 896 896" style="color: red;" focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-up" aria-hidden="true"><path d="M868 545.5L536.1 163a31.96 31.96 0 00-48.3 0L156 545.5a7.97 7.97 0 006 13.2h81c4.6 0 9-2 12.1-5.5L474 300.9V864c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V300.9l218.9 252.3c3 3.5 7.4 5.5 12.1 5.5h81c6.8 0 10.5-8 6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="!isDeviceUp" style="font-size:14px">
+                                <svg viewBox="64 64 896 896"  style="color: rgb(5, 199, 92);"  focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-down" aria-hidden="true"><path d="M862 465.3h-81c-4.6 0-9 2-12.1 5.5L550 723.1V160c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v563.1L255.1 470.8c-3-3.5-7.4-5.5-12.1-5.5h-81c-6.8 0-10.5 8.1-6 13.2L487.9 861a31.96 31.96 0 0048.3 0L868 478.5c4.5-5.2.8-13.2-6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="isDeviceUp" style="color: ccc;font-size: 12px;" class="upCls">
+                                {{devicelastMonthNum}}%
+                            </span>
+                            <span *ngIf="!isDeviceUp" style="color: ccc;font-size: 12px;" class="downCls">
+                                {{devicelastMonthNum}}%
+                            </span>
+                            <span *ngIf="isDeviceUp" style="color: ccc;font-size: 12px;">
+                                较上个月增加
+                            </span>
+                            <span *ngIf="!isDeviceUp" style="color: ccc;font-size: 12px;">
+                                较上个月减少
+                            </span>
+                        </p>
+                    </nz-col>
+                    <nz-col nzSpan="6">
+                        <p>
+                            当月预警条数
+                        </p>
+                        <span>
+                            {{alarmAndWarnNum}}
+                            <dd>条</dd>
+                        </span>
+                        <p>
+                            <span *ngIf="isAlarmUp" class="upCls" style="font-size:14px">
+                                <svg viewBox="64 64 896 896" style="color: red;" focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-up" aria-hidden="true"><path d="M868 545.5L536.1 163a31.96 31.96 0 00-48.3 0L156 545.5a7.97 7.97 0 006 13.2h81c4.6 0 9-2 12.1-5.5L474 300.9V864c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V300.9l218.9 252.3c3 3.5 7.4 5.5 12.1 5.5h81c6.8 0 10.5-8 6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="!isAlarmUp" style="font-size:14px">
+                                <svg viewBox="64 64 896 896"  style="color: rgb(5, 199, 92);"  focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-down" aria-hidden="true"><path d="M862 465.3h-81c-4.6 0-9 2-12.1 5.5L550 723.1V160c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v563.1L255.1 470.8c-3-3.5-7.4-5.5-12.1-5.5h-81c-6.8 0-10.5 8.1-6 13.2L487.9 861a31.96 31.96 0 0048.3 0L868 478.5c4.5-5.2.8-13.2-6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="isAlarmUp" style="color: ccc;font-size: 12px;" class="upCls">
+                                {{alarmAndWarnLastNum}}%
+                            </span>
+                            <span *ngIf="!isAlarmUp" style="color: ccc;font-size: 12px;" class="downCls">
+                                {{alarmAndWarnLastNum}}%
+                            </span>
+                            <span *ngIf="isAlarmUp" style="color: ccc;font-size: 12px;">
+                                较上个月增加
+                            </span>
+                            <span *ngIf="!isAlarmUp" style="color: ccc;font-size: 12px;">
+                                较上个月减少
+                            </span>
+                        </p>
+                    </nz-col>
+                    <nz-col nzSpan="6">
+                        <p>
+                            成功处置次数
+                        </p>
+                        <span>
+                            {{successCheck}}
+                            <dd>次</dd>
+                        </span>
+                        <p>
+                            <span *ngIf="isCheckUp" class="upCls" style="font-size:14px">
+                                <svg viewBox="64 64 896 896" style="color: red;" focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-up" aria-hidden="true"><path d="M868 545.5L536.1 163a31.96 31.96 0 00-48.3 0L156 545.5a7.97 7.97 0 006 13.2h81c4.6 0 9-2 12.1-5.5L474 300.9V864c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V300.9l218.9 252.3c3 3.5 7.4 5.5 12.1 5.5h81c6.8 0 10.5-8 6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="!isCheckUp" style="font-size:14px">
+                                <svg viewBox="64 64 896 896"  style="color: rgb(5, 199, 92);"  focusable="false" fill="currentColor" width="14px" height="14px" data-icon="arrow-down" aria-hidden="true"><path d="M862 465.3h-81c-4.6 0-9 2-12.1 5.5L550 723.1V160c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v563.1L255.1 470.8c-3-3.5-7.4-5.5-12.1-5.5h-81c-6.8 0-10.5 8.1-6 13.2L487.9 861a31.96 31.96 0 0048.3 0L868 478.5c4.5-5.2.8-13.2-6-13.2z"></path></svg>
+                            </span>
+                            <span *ngIf="isCheckUp" style="color: ccc;font-size: 12px;" class="upCls">
+                                {{successCheckLastMonth}}%
+                            </span>
+                            <span *ngIf="!isCheckUp" style="color: ccc;font-size: 12px;" class="downCls">
+                                {{successCheckLastMonth}}%
+                            </span>
+                            <span *ngIf="isCheckUp" style="color: ccc;font-size: 12px;">
+                                较上个月增加
+                            </span>
+                            <span *ngIf="!isCheckUp" style="color: ccc;font-size: 12px;">
+                                较上个月减少
+                            </span>
+                        </p>
+                    </nz-col>
+                </nz-row>
+                <p class="right-title">
+                    安全态势图
+                </p>
+                <nz-row>
+                    <div id="offlineChartData" [ngStyle]="{'height':rightBoxItemHeight}"></div>
+                </nz-row>
+                <nz-row>
+                    <div nz-col nzSpan="10">
+                        <p class="right-title" style="margin: 0;">
+                            火情高发业态
+                        </p>
+                        <div id="formatDistribution" [ngStyle]="{'height':rightBoxItemHeight}"></div>
+                    </div>
+                    <div nz-col nzSpan="14">
+                        <p class="right-title" style="margin: 0;">
+                            火情时间段分布
+                        </p>
+                        <div id="timeDistribution" [ngStyle]="{'height':rightBoxItemHeight}"></div>
+                    </div>
+                </nz-row>
+                <nz-row>
+                    <p class="right-title" style="padding-top: 15px;margin: 0;">
+                        应急救援力量分布
+                    </p>
+                    <div id="rescuerCharts" [ngStyle]="{'height':rightBoxItemHeight}"></div>
+                </nz-row>
+            </div>
+        </div>
+        <!-- <div style="flex: 2.5;">
+            <h5 style="background: #fff;">
+                <i class="anticon anticon-home icon-p"><svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="home" aria-hidden="true"><path d="M946.5 505L560.1 118.8l-25.9-25.9a31.5 31.5 0 00-44.4 0L77.5 505a63.9 63.9 0 00-18.8 46c.4 35.2 29.7 63.3 64.9 63.3h42.5V940h691.8V614.3h43.4c17.1 0 33.2-6.7 45.3-18.8a63.6 63.6 0 0018.7-45.3c0-17-6.7-33.1-18.8-45.2zM568 868H456V664h112v204zm217.9-325.7V868H632V640c0-22.1-17.9-40-40-40H432c-22.1 0-40 17.9-40 40v228H238.1V542.3h-96l370-369.7 23.1 23.1L882 542.3h-96.1z"></path></svg></i>                联网单位
+            </h5>
+            <nz-row class="orgInfo-box">
+                <nz-col nzSpan="12">
+                    <sv-container size="small" col="1">
+                        <sv label="联网单位">{{orgInfo.orgName}}</sv>
+                        <sv label="安装位置">
+                            <span *ngIf="message && message.data">
+                                    {{message.data.place}}
+                                </span>
+                        </sv>
+                        <sv label="单位地址">{{orgInfo.address}}</sv>
+                        <sv label="上报时间">
+                            <span *ngIf="message && message.data">
+                                    {{message.data.lastReportTime | date:"HH:mm:ss"}}
+                                </span>
+                        </sv>
+
+                        <sv label="运营中心">
+                            <span *ngIf="operationMap[orgInfo.operateId]">
+                                    {{operationMap[orgInfo.operateId].name}}
+                                </span>
+                        </sv>
+                        <sv label="服务状态">{{orgInfo.contractStatus}}</sv>
+                        <sv label="营业状态">{{orgInfo.businessStatus}}</sv>
+
+                    </sv-container>
+                </nz-col>
+                <nz-col nzSpan="12">
+                    <sv-container size="small" col="1">
+                        <sv label="建筑数量">
+                            <span *ngIf="buildNumber">
+                                    {{buildNumber}}幢
+                                </span>
+                        </sv>
+                        <sv label="建筑结构">
+                            <span *ngIf="dataSet2">
+                                    {{dataSet2[0].materialText}}
+                                </span>
+                        </sv>
+                        <sv label="房间数目">
+                            <span *ngIf="rooms">
+                                    {{rooms}}间
+                                </span>
+                        </sv>
+                        <sv label="物业类型">
+                            {{industryCategoryMap[orgInfo.industryCategory]}}
+                        </sv>
+                        <sv label="风险源">
+                            <span *ngIf="dataSet5[0]">
+                                    {{dataSet5[0].nameText}} {{dataSet5[0].count}}
+                                </span>
+                        </sv>
+                        <sv label="紧急联系人1"> <span *ngIf="person1">{{person1.name}} {{person1.phone}}</span></sv>
+                        <sv label="紧急联系人2"> <span *ngIf="person2">{{person2.name}} {{person2.phone}}</span></sv>
+                    </sv-container>
+                </nz-col> -->
+        <!-- </nz-row> -->
+        <!-- <nz-row *ngIf="orgInfo.images && orgInfo.images.length!=0" style="background: #fff;padding:20px 20px 20px 50px">
+            <b *ngFor="let item of orgInfo.images" style="display: inline-block;margin-right: 30px;">
+                                <img src="{{item.url}}" height="170px;" style="max-width: 200px;;">
+                            </b>
+        </nz-row> -->
+        <!-- </div> -->
+    </div>
+
+    <div id="video-container-box" [ngStyle]="{display:boxShow}" (click)="closeVideo()">
+        <div>
+            <div id="video-container" style="width:800px;">
+            </div>
+        </div>
+    </div>
+
+
+</div>

@@ -1,0 +1,42 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+    </ng-template>
+</page-header>
+
+<nz-card nzTitle="联网单位信息">
+    <nz-tabset>
+        <nz-tab nzTitle="单位信息">Content of Tab Pane 1</nz-tab>
+        <nz-tab nzTitle="建筑信息">Content of Tab Pane 2</nz-tab>
+        <nz-tab nzTitle="消防视频">Content of Tab Pane 3</nz-tab>
+        <nz-tab nzTitle="历史记录">Content of Tab Pane 3</nz-tab>
+    </nz-tabset>
+</nz-card>
+
+<nz-card nzTitle="报受处理流程图">
+
+</nz-card>
+
+<nz-card nzTitle="操作控制台">
+    <!-- 警情处理 -->
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">误报确认</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">设备复位</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">设备隔离</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">确认成灾</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">语音外呼</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">推送短息</button>
+    <!-- 故障 -->
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">设备隔离</button>
+    <button (click)="setDevice()" *ngIf="messageType==1" nz-button nzType="primary">离线处理</button>
+</nz-card>
+
+<nz-card nzTitle="报受处理记录表">
+    <nz-row>
+        选择记录类型
+        <nz-select style="width: 120px;" nzShowSearch nzPlaceHolder="选择记录类型" name="type" [(ngModel)]="type">
+            <nz-option *ngFor="let item of historyTypeList" [nzLabel]="item.name" [nzValue]="item.type">
+            </nz-option>
+        </nz-select>
+    </nz-row>
+
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)"></table-template>
+</nz-card>

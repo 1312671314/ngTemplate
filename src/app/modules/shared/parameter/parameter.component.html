@@ -1,0 +1,5 @@
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="title" nzWidth="1000px" [nzFooter]="null" (nzOnCancel)="statusCancel()">
+    <ng-container *nzModalContent>
+        <table-template [dataList]="statusList" [theadList]="theadList" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (editFuncOut)="editFun($event)"></table-template>
+    </ng-container>
+</nz-modal>

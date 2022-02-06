@@ -1,0 +1,27 @@
+th {
+    font-weight: bold;
+    padding: 8px 6px !important;
+    font-size: 15px;
+    text-align: center !important;
+}
+
+td {
+    text-align: center !important;
+    padding: 6px !important;
+}
+
+.widthSet {
+    width: 260px;
+}
+
+.indexClas {
+    width: 40px;
+}
+
+.tooltip {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100px;
+    display: block;
+}

@@ -1,0 +1,242 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+    </ng-template>
+</page-header>
+
+<form nz-form class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">联网单位</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="orgName" name="orgName" placeholder="请输入联网单位" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">设备类型</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择设备类型" name="status" [(ngModel)]="deviceType">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option *ngFor="let item of deviceTypeArr" [nzLabel]="item.name" [nzValue]="item.name">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">消息类型</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzPlaceHolder="选择设备类型" name="messageTypeId" [(ngModel)]="messageTypeId">
+                        <nz-option *ngFor="let item of messageTypeArr" [nzLabel]="item.name" [nzValue]="item.val">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-range-picker [nzPlaceHolder]="['上报开始', '上报结束']" [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+        </div>
+
+    </div>
+    <div nz-row style="padding-bottom: 15px;">
+        <div nz-col nzMd="8" nzSm="24">
+            <button nz-button nzType="primary" (click)="search()">
+              <i class="anticon anticon-search"></i>查询
+          </button>
+            <button nz-button nzType="primary" (click)="rest()">
+              <i class="anticon anticon-export"></i>重置
+          </button>
+            <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="opMenu">
+				<i class="anticon anticon-export"></i>批量操作
+			</button>
+            <nz-dropdown-menu #opMenu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item (click)="batchCheck(2)">误报确认</li>
+                    <li nz-menu-item (click)="batchOperation(2)">远程隔离</li>
+                    <li nz-menu-item (click)="batchCheck(1)">成灾确认</li>
+                </ul>
+            </nz-dropdown-menu>
+        </div>
+    </div>
+</form>
+
+<table-template [tableType]="'rowSelectionTableAll'" [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"
+    (checkBoxOut)="checkBoxFun($event)" (popUpFunOut)="popUpFun($event)"></table-template>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="误报原因" nzWidth="620px" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                选择原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-checkbox-group [(ngModel)]="checkOptionsRowOne" (ngModelChange)="checkOptionsChangesOne(checkOptionsRowOne)"></nz-checkbox-group>
+                <br/>
+                <br/>
+                <nz-checkbox-group [(ngModel)]="checkOptionsRowTwo" (ngModelChange)="checkOptionsChangesTwo(checkOptionsRowOne)"></nz-checkbox-group>
+                <br/>
+                <br/>
+            </nz-col>
+        </nz-row>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                其他原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入其他误报原因" [(ngModel)]="checkRemark" />
+            </nz-col>
+        </nz-row>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleBatchCheck" nzTitle="隔离原因" nzWidth="620px" (nzOnCancel)="handleCancel2()" (nzOnOk)="handleOk2()">
+    <ng-container *nzModalContent>
+
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                选择原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-checkbox-group [(ngModel)]="checkOptionsRowThree" (ngModelChange)="checkOptionsChangesThree(checkOptionsRowThree)"></nz-checkbox-group>
+                <br/>
+                <br/>
+            </nz-col>
+        </nz-row>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                其他原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入其他原因" [(ngModel)]="checkRemark" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                解除隔离提醒:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-date-picker [(ngModel)]="isolateRemindEndTime" (ngModelChange)="dateOnChange($event)"></nz-date-picker>
+            </nz-col>
+        </nz-row>
+
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isVisibleBatchCheckTrue" nzTitle="成灾原因" nzWidth="620px" (nzOnCancel)="handleCancel3()" (nzOnOk)="handleOk3()">
+    <ng-container *nzModalContent>
+
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                选择原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-checkbox-group [(ngModel)]="checkOptionsRowFour" (ngModelChange)="checkOptionsChangesFour(checkOptionsRowFour)"></nz-checkbox-group>
+                <br/>
+                <br/>
+            </nz-col>
+        </nz-row>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                其他原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入其他原因" [(ngModel)]="checkRemark" />
+            </nz-col>
+        </nz-row>
+    </ng-container>
+</nz-modal>
+
+
+<nz-drawer [nzVisible]="isVisibleDetail" nzWidth="900px" nzPlacement="right" nzTitle="详情" (nzOnClose)="closeDetail()">
+
+    <ng-container *nzDrawerContent>
+        <nz-card>
+            <nz-tabset>
+                <nz-tab nzTitle="单位信息">
+                    <nz-row>
+                        <nz-col nzSpan="20">
+                            <sv-container size="small" col="2">
+                                <sv label="联网单位">{{orgInfo.orgName}}</sv>
+                                <sv label="信用代码">{{orgInfo.certSerial}}</sv>
+                                <sv label="单位电话">{{orgInfo.tel}}</sv>
+                                <sv label="企业种类">{{orgTypeMap[orgInfo.ownershipType]?orgTypeMap[orgInfo.ownershipType].name:"-"}}</sv>
+                                <sv label="所属辖区">{{orgInfo.SSQ}}</sv>
+                                <sv label="单位地址">{{orgInfo.address}}</sv>
+                                <sv label="运营中心" *ngIf="operationMap[orgInfo.operateId]">{{operationMap[orgInfo.operateId].name}}</sv>
+                                <!-- <sv label="运营中心电话" *ngIf="operationMap[orgInfo.operateId]">-</sv> -->
+                                <sv label="运营中心负责人" *ngIf="operationMap[orgInfo.operateId]">{{operationMap[orgInfo.operateId].name}}</sv>
+                                <sv label="合同状态">{{orgInfo.contractStatus}}</sv>
+                                <sv label="公司门头" col="1">
+                                    <b *ngFor="let item of orgInfo.images" style="display: inline-block;margin-right: 10px;">
+                                        <img src="{{item.url}}" width="180px" height="160px;">
+                                    </b>
+                                </sv>
+                            </sv-container>
+                        </nz-col>
+                    </nz-row>
+                </nz-tab>
+                <nz-tab nzTitle="紧急联系人">
+                    <table-template [dataList]="dataSet7" [theadList]="teadList7" [keyNameList]="keyNameList7"></table-template>
+                </nz-tab>
+                <nz-tab nzTitle="建筑信息">
+                    <table-template [dataList]="dataSet3" [theadList]="teadList3" [keyNameList]="keyNameList3" (viewImgOut)="viewImg($event)"></table-template>
+                </nz-tab>
+                <nz-tab nzTitle="消防视频">
+                    <table-template [dataList]="dataSet4" [theadList]="teadList4" [pageIndex]="pageIndex4" [keyNameList]="keyNameList4" [pageSize]="pageSize4" (pageIndexOut)="turnPage4($event)" (editFuncOut)="editFun4($event)"></table-template>
+                </nz-tab>
+                <!-- <nz-tab nzTitle="历史记录">历史记录</nz-tab> -->
+
+            </nz-tabset>
+        </nz-card>
+        <nz-card nzTitle="所属点位列表" *ngIf="isShowPointList">
+            <table-template [dataList]="pointList" [theadList]="pointTeadList" [keyNameList]="pointKeyNameList" [pageSize]="pageSizeHistory"></table-template>
+        </nz-card>
+
+        <nz-card nzTitle="操作控制台">
+            <!-- 警情处理 -->
+            <button (click)="setDevice(1)" *ngIf="messageType==1" nz-button nzType="primary">误报确认</button>
+            <button (click)="setDevice(2)" *ngIf="messageType==1" nz-button nzType="primary">设备复位</button>
+            <button (click)="setDevice(3)" *ngIf="messageType==1" nz-button nzType="primary">设备隔离</button>
+            <br/>
+            <br/>
+            <button (click)="setDevice(4)" *ngIf="messageType==1" nz-button nzType="primary">确认成灾</button>
+            <button (click)="setDevice(5)" *ngIf="messageType==1" nz-button nzType="primary">语音外呼</button>
+            <button (click)="setDevice(6)" *ngIf="messageType==1" nz-button nzType="primary">推送短息</button>
+        </nz-card>
+
+        <nz-card nzTitle="报受处理记录表">
+            <table-template [dataList]="dataSetHistory" [theadList]="teadListHistory" [total]="totalHistory" [pageIndex]="pageIndexHistory" [keyNameList]="keyNameListHistory" [pageSize]="pageSizeHistory" (pageIndexOut)="turnPageHistory($event)"></table-template>
+        </nz-card>
+
+    </ng-container>
+</nz-drawer>
+
+<parameter [isVisible]="isVisibleStatus" [statusList]="statusList" [theadList]="teadList2" [keyNameList]="keyNameList2" (isVisibleOut)="isVisibleOut($event)"></parameter>
+
+<nz-modal [(nzVisible)]="isVisibleImgList" nzWidth="1000px" [nzTitle]="imgTitle" [nzFooter]="null" nzClosable=true (nzOnCancel)="imgListClose()">
+    <ng-container *nzModalContent>
+        <!-- <file-upload [fileList]="imgList" [imgSize]="'5'" (fileListOut)="getImgList($event)"></file-upload> -->
+        <nz-row style="text-align: center; width: 100%;">
+            <a href="{{item.url}}" *ngFor="let item of imgList" target="_blank">
+                <img src="{{item.url}}" width="400px" height="300px" />
+            </a>
+        </nz-row>
+    </ng-container>
+</nz-modal>
+
+<div id="real-time-box" [ngStyle]="{display:boxShow}" (click)="closeVideo()">
+    <span>
+        x
+    </span>
+    <div>
+        <div id="real-time-container" style="width:800px;">
+        </div>
+    </div>
+</div>

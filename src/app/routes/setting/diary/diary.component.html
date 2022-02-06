@@ -1,0 +1,8 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+
+    </ng-template>
+</page-header>
+<nz-card>
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+</nz-card>

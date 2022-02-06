@@ -1,0 +1,40 @@
+<nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+    <nz-col [nzSpan]="sizes">
+        <nz-form-item style="padding: 0; margin: 0;">
+            <nz-form-label>省
+            </nz-form-label>
+            <nz-form-control>
+                <nz-select style="min-width: 80px;" [nzPlaceHolder]="'选择省／直辖市'" [(ngModel)]="p" (ngModelChange)="provinceChange($event)" [ngModelOptions]="{standalone: true}">
+                    <nz-option nzValue="-1" nzLabel="全部" *ngIf="!isShowAll"></nz-option>
+                    <nz-option *ngFor="let province of provinces()" [nzLabel]="getProvince(province).name" [nzValue]="getProvince(province).id">
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </nz-col>
+    <nz-col [nzSpan]="sizes">
+        <nz-form-item style="padding: 0; margin: 0;">
+            <nz-form-label>市</nz-form-label>
+            <nz-form-control>
+                <nz-select style="min-width: 80px;" [nzPlaceHolder]="'选择>市／县'" [(ngModel)]="c" (ngModelChange)="cityChange($event)" [ngModelOptions]="{standalone: true}">
+                    <nz-option nzValue="-1" nzLabel="全部" *ngIf="!isShowAll"></nz-option>
+                    <nz-option *ngFor="let city of cities(locationInfo.provinceId)" [nzLabel]="getCity(locationInfo.provinceId , city).name" [nzValue]="getCity(locationInfo.provinceId , city).id">
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </nz-col>
+
+    <nz-col [nzSpan]="sizes" *ngIf="isHide!=true">
+        <nz-form-item style="padding: 0; margin: 0;">
+            <nz-form-label>区</nz-form-label>
+            <nz-form-control>
+                <nz-select style="min-width: 80px;" [nzPlaceHolder]="'请选择区／镇'" [(ngModel)]="d" (ngModelChange)="districtChange($event)" [ngModelOptions]="{standalone: true}">
+                    <nz-option nzValue="-1" nzLabel="全部" *ngIf="!isShowAll"></nz-option>
+                    <nz-option *ngFor="let district of districts(locationInfo.provinceId , locationInfo.cityId)" [nzLabel]="getDistrict(locationInfo.provinceId ,locationInfo.cityId, district).name" [nzValue]="getDistrict(locationInfo.provinceId , locationInfo.cityId , district).id">
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </nz-col>
+</nz-row>

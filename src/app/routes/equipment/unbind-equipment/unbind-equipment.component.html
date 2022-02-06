@@ -1,0 +1,89 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <!-- <button (click)="add()" nz-button nzType="primary">新建</button> -->
+    </ng-template>
+</page-header>
+
+<form nz-form class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">联网单位</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="reportOrgName" name="reportOrgName" placeholder="请输入联网单位" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">安装人员</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="installerName" name="installerName" placeholder="请输入安装人员" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">安装人员电话</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="installerPhone" name="installerPhone" placeholder="请输入安装人员电话" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col nzMd="6" nzSm="24">
+            <button nz-button nzType="primary" (click)="search()">
+              <i class="anticon anticon-search"></i>查询
+          </button>
+            <button nz-button nzType="primary" (click)="rest()">
+              <i class="anticon anticon-export"></i>重置
+          </button>
+            <!-- <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="opMenu">
+				<i class="anticon anticon-export"></i>批量操作
+			</button>
+            <nz-dropdown-menu #opMenu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item (click)="batchOperation(2)">误报确认</li>
+                    <li nz-menu-item (click)="batchOperation(2)">远程隔离</li>
+                    <li nz-menu-item (click)="batchOperation(1)">成灾确认</li>
+                </ul>
+            </nz-dropdown-menu> -->
+        </div>
+    </div>
+
+</form>
+
+<table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="搜索单位并且认领网关" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <nz-row>
+            <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+                <input type="text" nz-input placeholder="请输入单位名称" [(ngModel)]="searchVal">
+            </nz-input-group>
+            <ng-template #suffixButton>
+                <button nz-button nzType="primary" nzSize="large" nzSearch (click)="searchOrg()">搜索</button>
+            </ng-template>
+        </nz-row>
+        <nz-table #rowSelectionTable [nzShowPagination]="false" [nzData]="dataSetOrg" [nzTotal]="totalOrg">
+            <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>单位</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of rowSelectionTable.data">
+                    <td>
+                        <label nz-checkbox [(ngModel)]="data.checked" [nzDisabled]="data.disabled" (ngModelChange)="checkedItemFun(data)"></label>
+                    </td>
+                    <td>{{data.orgName?data.orgName:"无"}}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </ng-container>
+</nz-modal>

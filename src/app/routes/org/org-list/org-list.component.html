@@ -1,0 +1,79 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<nz-card>
+    <form nz-form class="search__form">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+            <div nz-col nzMd="6" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label nzFor="no">联网单位名称</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input [(ngModel)]="orgName" name="orgName" placeholder="请输入公司名称" class="search-input" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzMd="6" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label nzFor="type">服务状态</nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择服务状态" name="status" [(ngModel)]="status">
+                            <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                            <nz-option nzLabel="服务中" nzValue="SERVING"></nz-option>
+                            <nz-option nzLabel="未启动" nzValue="NOT_START"></nz-option>
+                            <nz-option nzLabel="已过期" nzValue="SERVE_END"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzMd="6" nzSm="24" *ngIf="isPlatForm">
+                <nz-form-item>
+                    <nz-form-label nzFor="type">运营中心</nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择运营中心" name="status" [(ngModel)]="operateId">
+                            <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                            <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzMd="6" nzSm="24">
+                <nz-form-item>
+                    <nz-form-label nzFor="orgSerial">联网单位编号</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input [(ngModel)]="orgNum" name="orgSerial" placeholder="请输入联网单位编号" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+
+        <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+            <div nz-col nzMd="16" nzSm="16">
+                <nz-form-item>
+                    <nz-form-label nzFor="type">行政区域</nz-form-label>
+                    <nz-form-control>
+                        <location-select [locationInfo]="location" [sizes]="8" (onLocationSelect)="onLocationSelect($event)">
+                        </location-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzMd="8" nzSm="24">
+                <button nz-button nzType="primary" (click)="search()">
+                    <i class="anticon anticon-search"></i>查询
+                </button>
+                <button nz-button nzType="primary" (click)="rest()">
+                    <i class="anticon anticon-export"></i>重置
+                </button>
+                <button nz-button nzType="primary" (click)="export()">
+                    <i class="anticon anticon-export"></i> 导入
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+
+</nz-card>

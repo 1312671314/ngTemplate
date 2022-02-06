@@ -1,0 +1,181 @@
+<nz-card [nzBordered]="false" style="margin-top: 80px;">
+    <nz-row>
+        <!-- <form nz-form > -->
+        <nz-col nzSpan="6">
+            设备类型:
+            <nz-select ngModel="type" ngDefaultControl style="width: 120px;">
+                <nz-option nzValue="-1" nzLabel="全部设备类型"></nz-option>
+                <nz-option nzValue="1" nzLabel="无线智能预警"></nz-option>
+                <nz-option nzValue="2" nzLabel="电气火灾预警"></nz-option>
+                <nz-option nzValue="3" nzLabel="远程报警主机"></nz-option>
+                <nz-option nzValue="4" nzLabel="可燃气体预警"></nz-option>
+            </nz-select>
+        </nz-col>
+        <nz-col nzSpan="10">
+            时间范围
+            <nz-range-picker [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+        </nz-col>
+        <nz-col nzSpan="6">
+            联网单位 <input style="width: 130px;" nz-input placeholder="请输入联网单位" [(ngModel)]="orgName" />
+        </nz-col>
+        <nz-col nzSpan="2">
+            <button nz-button>批量处理</button>
+        </nz-col>
+        <!-- </form> -->
+
+    </nz-row>
+    <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
+        <thead>
+            <tr>
+                <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="onAllChecked($event)"></th>
+                <th>联网单位</th>
+                <th>设备名称</th>
+                <th>安装位置</th>
+                <th>{{thName}}时间</th>
+                <th>{{thName}}</th>
+                <th>处理状态</th>
+                <th>最近处理人</th>
+                <th>在线状态</th>
+                <th>预警次数</th>
+                <th>网关型号</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of rowSelectionTable.data">
+                <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+                <td>{{ data.orgName }}</td>
+                <td>{{ data.name }}</td>
+                <td>{{ data.place }}</td>
+                <td>{{ data.time }}</td>
+                <td>{{ typeName }}</td>
+                <td>{{ data.status }}</td>
+                <td>{{ data.person }}</td>
+                <td>{{ data.online }}</td>
+                <td>{{ data.vigilancetTimes }}</td>
+                <td>{{ data.serialNum }}</td>
+                <td>
+                    <button nz-button (click)="showItem(data)">详情</button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-card>
+
+<nz-drawer [nzClosable]="false" [nzVisible]="isVisible" nzWidth="700px" nzPlacement="right" nzTitle="详情" (nzOnClose)="handleCancel()">
+    <ng-container *nzDrawerContent>
+        <nz-tabset>
+            <nz-tab nzTitle="当前警情">
+                <sv-container size="small" col="2">
+                    <sv label="流水编号">20218120039</sv>
+                    <sv label="单位名称">{{detailItem.orgName}}</sv>
+                    <sv label="联系方式">0571-76893273</sv>
+                    <sv label="告警点位">无线烟感探测器</sv>
+                    <sv label="安装位置">{{detailItem.place}}</sv>
+                    <sv label="网关编号">{{detailItem.serialNum}}</sv>
+                    <sv label="网关位置">2楼前台</sv>
+                    <sv label="网关状态">正常</sv>
+                    <sv label="备注">请于两个工作日内确认</sv>
+                    <sv label="首次消息">2017-07-07 11:23:00</sv>
+                    <sv label="消息次数">320</sv>
+                    <sv label="最近消息">2021-08-23 14:13:00</sv>
+                </sv-container>
+                <nz-row>
+                    警情处理流程图:
+                </nz-row>
+                <nz-row>
+                    远程紧急操作:
+                </nz-row>
+            </nz-tab>
+            <nz-tab nzTitle="单位信息">
+                <sv-container size="small" col="2">
+                    <sv label="单位名称">{{detailItem.orgName}}</sv>
+                    <sv label="联系方式">0571-76893273</sv>
+                    <sv label="运营中心">杭州城东运营中心</sv>
+                    <!-- <sv label="运营中心电话">0571-76868888</sv> -->
+                    <sv label="运营中心负责人">王五</sv>
+                    <sv label="合同状态">有效</sv>
+                    <sv label="紧急联系人(低)">李四 (保安)</sv>
+                    <sv label="紧急联系人电话(低)">15159206211</sv>
+                    <sv label="紧急联系人(中)">王五 (经理)</sv>
+                    <sv label="紧急联系人电话(中)">15159206213</sv>
+                    <sv label="紧急联系人(高)">李四 (法人)</sv>
+                    <sv label="紧急联系人电话(高)">15159206233</sv>
+                    <sv label="公司门头招牌"></sv>
+                </sv-container>
+
+            </nz-tab>
+            <nz-tab nzTitle="建筑信息">
+                <sv-container size="small" col="2">
+                    <sv label="建筑物编号">x122312</sv>
+                    <sv label="建筑物名称">华星科技大楼</sv>
+                    <sv label="楼层数量">11</sv>
+                    <sv label="房间数">200</sv>
+                    <sv label="面积">5000平方米</sv>
+                    <sv label="结构类型">钢混</sv>
+                    <sv label="属性">写字楼</sv>
+                    <sv label="外观照片"></sv>
+                    <sv label="平面图"></sv>
+                </sv-container>
+            </nz-tab>
+            <nz-tab nzTitle="历史消息">
+                <nz-table #basicTable [nzData]="dataSet2">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>点位名称</th>
+                            <th>消息时间</th>
+                            <th>消息类型</th>
+                            <th>处理结果</th>
+                            <th>处理人</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of basicTable.data; let index = index">
+                            <td>{{index+1}}</td>
+                            <td>{{data.place}}</td>
+                            <td>{{data.time}}</td>
+                            <td>{{data.type}}</td>
+                            <td>{{data.result}}</td>
+                            <td>{{data.person}}</td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+            </nz-tab>
+        </nz-tabset>
+    </ng-container>
+</nz-drawer>
+
+<!-- <nz-modal [(nzVisible)]="isVisible" nzWidth="1000" nzTitle="详情" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+        <sv-container class="mb-lg">
+            <sv label="用户姓名">付小小</sv>
+            <sv label="会员卡号">32943898021309809423</sv>
+            <sv label="身份证">3321944288191034921</sv>
+            <sv label="联系方式">18112345678</sv>
+            <sv label="联系地址">曲丽丽 18100000000 浙江省杭州市西湖区黄姑山路工专路交叉路口</sv>
+        </sv-container>
+
+        <nz-tabset>
+            <nz-tab nzTitle="当前警情">
+                <sv-container size="small" col="2">
+                    <sv label="流水编号">20218120039</sv>
+                    <sv label="单位名称">{{detailItem.orgName}}</sv>
+                    <sv label="联系方式">0571-76893273</sv>
+                    <sv label="告警点位">无线烟感探测器</sv>
+                    <sv label="安装位置">{{detailItem.place}}</sv>
+                    <sv label="网关编号">{{detailItem.serialNum}}</sv>
+                    <sv label="网关位置">2楼前台</sv>
+                    <sv label="网关状态">正常</sv>
+                    <sv label="备注">请于两个工作日内确认</sv>
+                    <sv label="首次消息">2017-07-07 11:23:00</sv>
+                    <sv label="消息次数">320</sv>
+                    <sv label="最近消息">2021-08-23 14:13:00</sv>
+                </sv-container>
+
+
+            </nz-tab>
+            <nz-tab nzTitle="单位信息">单位信息</nz-tab>
+            <nz-tab nzTitle="屏幕图纸">屏幕图纸</nz-tab>
+            <nz-tab nzTitle="历史消息">历史消息</nz-tab>
+        </nz-tabset>
+    </nz-modal> -->

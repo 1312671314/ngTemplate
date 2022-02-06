@@ -1,0 +1,386 @@
+<nz-table *ngIf="tableType == 'ajaxTable'" nzWidth="800px" [nzScroll]="{ x: '800px' }" #ajaxTable [nzData]="dataList" [nzNoResult]="NoDataResult" [nzShowSizeChanger]="false" [nzFrontPagination]="false" [nzTotal]="total" [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize"
+    (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData()">
+    <thead class="table-head">
+        <tr>
+            <th *ngFor="let item of theadList" [ngClass]="{widthSet:item.widthSet,indexClas:item.type == 'index'}">
+                {{ item.name }}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of ajaxTable.data">
+            <td *ngFor="let keyItem of keyNameList" [ngClass]="{widthSet:item.widthSet,indexClas:item.type == 'index'}">
+                <span *ngIf="keyItem.type == 'btnName'">
+					<a (click)="viewFun(item,keyItem.btnType)">
+						{{item[keyItem.name]}}
+					</a>
+				</span>
+
+                <span *ngIf="keyItem.type == 'imgList'">
+					<button nz-button (click)="viewImg(item,keyItem.name)">查看</button>
+					<!-- <file-upload [fileList]="item[keyItem.name]" [imgSize]="'5'" (fileListOut)="spreadFun($event)"></file-upload> -->
+				</span>
+
+                <span *ngIf="keyItem.type == 'index'">
+					{{item[keyItem.name]+1}}
+				</span>
+
+                <span *ngIf="keyItem.type == 'img'">
+					<img src="{{item[keyItem.name]}}" width="40px" height="40px">
+				</span>
+
+                <span *ngIf="keyItem.type == 'tooltip'">
+					<span nz-tooltip nzTooltipTitle="{{item[keyItem.allText]?item[keyItem.allText]:item[keyItem.name]}}">{{item[keyItem.name]}}</span>
+                </span>
+
+                <span *ngIf="keyItem.type == 'text'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "无"
+					}}{{ keyItem.unitText }}
+				</span>
+                <span *ngIf="keyItem.type == 'number'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "0"
+					}}{{ keyItem.unitText }}
+				</span>
+                <span *ngIf="keyItem.type == 'popUp'" class="popUp" (click)="popUpFun(item)">
+					{{ item[keyItem.name]}}
+				</span>
+
+                <span *ngIf="keyItem.type == 'money'">
+					{{
+					item[keyItem.name] / keyItem.unit
+					? item[keyItem.name] / keyItem.unit
+					: 0
+					}}{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type=='url'">
+					<a target="_blank" href="{{item.url}}" *ngIf="item.url.indexOf('http')==0" >{{keyItem.text}}</a>
+					<span   *ngIf="item.url.indexOf('http')!=0">未上传</span>
+                </span>
+
+                <img *ngIf="keyItem.type == 'img'" src="{{ item[keyItem.name] }}" alt="" width="45px" />
+                <span *ngIf="keyItem.type == 'time'">
+					<dd *ngIf="item[keyItem.name]=='无'">
+						无
+					</dd>
+					<dd *ngIf="item[keyItem.name]!='无'">
+						{{ item[keyItem.name] | date: "yyyy-MM-dd HH:mm" }}
+					</dd>
+				</span>
+
+                <span *ngIf="keyItem.type == 'buttonList'" [ngStyle]="{'display': 'inline-block','width':keyItem.buttons.length*70+'px'}">
+					<span *ngFor="let btn  of keyItem.buttons">
+						<button nz-button  style="margin-right: 10px;" (click)="editFun(item,btn.index)">
+							{{btn.text}}
+						</button>
+					</span>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-table *ngIf="tableType == 'rowSelectionTableAll'" [nzScroll]="{ x: '1200px', y: '240px' }" #rowSelectionTable [nzData]="dataList" [nzNoResult]="NoDataResult" [nzScroll]="{ x: '500px' }" [nzShowSizeChanger]="false" [nzFrontPagination]="false" [nzTotal]="total"
+    [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+    <thead class="table-head">
+        <tr>
+            <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)" style="width: 80px;"> 全选</th>
+            <th *ngFor="let item of theadList ; let inx = index" [ngClass]="{widthSet:item.widthSet,twoBtn:item.twoBtn,oneBtn:item.oneBtn,indexClas:item.type == 'index'}">
+                <span>
+					{{ item.name }}
+				</span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data">
+            <td nzShowCheckbox [(nzChecked)]="item.checked" [nzDisabled]="item.disabled" (nzCheckedChange)="refreshStatus()" style="width: 80px;"></td>
+            <td *ngFor="let keyItem of keyNameList" [ngClass]="{widthSet:item.widthSet,twoBtn:item.twoBtn,oneBtn:item.oneBtn,indexClas:item.type == 'index'}">
+                <span *ngIf="keyItem.type == 'tooltip'">
+					<span nz-tooltip nzTooltipTitle="{{item[keyItem.allText]}}" class="tooltip">{{item[keyItem.name]}}</span>
+                </span>
+                <span *ngIf="keyItem.type == 'index'">
+					{{item[keyItem.name]+1}}
+				</span>
+                <span *ngIf="keyItem.type == 'text'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "无"
+					}}{{ keyItem.unitText }}
+				</span>
+                <span *ngIf="keyItem.type == 'number'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "0"
+					}}{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'money'">
+					{{ item[keyItem.name] / keyItem.unit }}
+					{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'popUp'" class="popUp" (click)="popUpFun(item)">
+					{{ item[keyItem.name]}}
+				</span>
+
+                <span *ngIf="keyItem.type == 'status'">
+					{{
+					item[keyItem.name]
+					? keyItem.trueText
+					: keyItem.falseText
+					}}
+				</span>
+
+                <img *ngIf="keyItem.type == 'img'" src="{{ item[keyItem.name] }}" alt="" width="45px" />
+                <span *ngIf="keyItem.type == 'time'">
+					<dd *ngIf="item[keyItem.name]=='无'">
+						无
+					</dd>
+					<dd *ngIf="item[keyItem.name]!='无'">
+						{{ item[keyItem.name] | date: "MM-dd HH:mm" }}
+					</dd>
+				</span>
+                <span *ngIf="keyItem.type == 'buttonList'" [ngStyle]="{'display': 'inline-block','width':keyItem.buttons.length*70+'px'}">
+					<span *ngFor="let btn  of keyItem.buttons">
+						<button nz-button  style="margin-right: 10px;" (click)="editFun(item,btn.index)">
+							{{btn.text}}
+						</button>
+					</span>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-table *ngIf="tableType == 'rowSelectionTable'" [nzShowPagination]="showPages" #rowSelectionTable [nzData]="dataList" [nzNoResult]="NoDataResult" [nzScroll]="{ x: '500px' }" [nzShowSizeChanger]="false" [nzFrontPagination]="false" [nzTotal]="total"
+    [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" (nzPageIndexChange)="searchData()" (nzPageSizeChange)="searchData()" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+    <thead class="table-head">
+        <tr>
+            <th>选择</th>
+            <th *ngFor="let item of theadList">
+                {{ item.name }}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data">
+            <td nzShowCheckbox [(nzChecked)]="item.checked" [nzDisabled]="item.disabled" (nzCheckedChange)="onlyCheckBoxFun(item)"></td>
+            <td *ngFor="let keyItem of keyNameList">
+                <span *ngIf="keyItem.type == 'text'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "无"
+					}}{{ keyItem.unitText }}
+				</span>
+                <span *ngIf="keyItem.type == 'number'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "0"
+					}}{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'money'">
+					{{ item[keyItem.name] / keyItem.unit }}
+					{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'status'">
+					{{
+					item[keyItem.name]
+					? keyItem.trueText
+					: keyItem.falseText
+					}}
+				</span>
+
+                <img *ngIf="keyItem.type == 'img'" src="{{ item[keyItem.name] }}" alt="" width="45px" />
+                <span *ngIf="keyItem.type == 'time'">
+					<dd *ngIf="item[keyItem.name]=='无'">
+						无
+					</dd>
+					<dd *ngIf="item[keyItem.name]!='无'">
+						{{ item[keyItem.name] | date: "yyyy-MM-dd HH:mm" }}
+					</dd>
+				</span>
+                <span *ngIf="keyItem.type == 'edit'">
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+                <span *ngIf="keyItem.type == 'view&edit'">
+					<button nz-button class="" (click)="viewFun(item)">
+						详 情
+					</button>
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+
+                <span *ngIf="keyItem.type == 'btnName'">
+					<a (click)="viewFun(item,keyItem.btnType)">
+						{{item[keyItem.name]}}
+					</a>
+                </span>
+
+                <span *ngIf="keyItem.type == 'check'">
+					<button
+						nz-button
+						class=""
+						*ngIf="item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button
+						nz-button
+						class=""
+						*ngIf="!item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+				</span>
+
+                <span *ngIf="keyItem.type == 'buttonList'" [ngStyle]="{'display': 'inline-block','width':keyItem.buttons.length*70+'px'}">
+					<span *ngFor="let btn  of keyItem.buttons">
+						<button nz-button  style="margin-right: 10px;" (click)="editFun(item,btn.index)">
+							{{btn.text}}
+						</button>
+					</span>
+                </span>
+
+                <span *ngIf="keyItem.type == 'check&edit'">
+					<button
+						nz-button
+						class=""
+						*ngIf="item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button
+						nz-button
+						class=""
+						*ngIf="!item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-table *ngIf="tableType == 'allList' " #rowSelectionTable [nzData]="dataList" [nzNoResult]="'没有数据,筛选条件搜索'" [nzScroll]="{ x: '500px' }" [nzShowSizeChanger]="false">
+    <thead class="table-head">
+        <tr>
+            <th *ngFor="let item of theadList">
+                {{ item.name }}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data">
+            <td *ngFor="let keyItem of keyNameList">
+                <span *ngIf="keyItem.type == 'nameView'">
+					<span class="nameView" (click)="viewFun(item)">
+						{{item[keyItem.name]?item[keyItem.name]:"无"}}
+					</span>
+                </span>
+
+                <span *ngIf="keyItem.type == 'popUp'" class="popUp" (click)="popUpFun(item)">
+					{{ item[keyItem.name]}}
+				</span>
+
+                <span *ngIf="keyItem.type == 'text'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "无"
+					}}{{ keyItem.unitText }}
+				</span>
+                <span *ngIf="keyItem.type == 'number'">
+					{{ item[keyItem.name] ? item[keyItem.name] : "0"
+					}}{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'money'">
+					{{ item[keyItem.name] / keyItem.unit }}
+					{{ keyItem.unitText }}
+				</span>
+
+                <span *ngIf="keyItem.type == 'status'">
+					{{
+					item[keyItem.name]
+					? keyItem.trueText
+					: keyItem.falseText
+					}}
+				</span>
+
+                <img *ngIf="keyItem.type == 'img'" src="{{ item[keyItem.name] }}" alt="" width="45px" />
+                <span *ngIf="keyItem.type == 'time'">
+					<dd *ngIf="item[keyItem.name] && item[keyItem.name]!='无'">
+						{{ item[keyItem.name] | date: "yyyy-MM-dd HH:mm" }}
+					</dd>
+				</span>
+                <span *ngIf="keyItem.type == 'edit'">
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+                <span *ngIf="keyItem.type == 'view&edit'">
+					<button nz-button class="" (click)="viewFun(item)">
+						详 情
+					</button>
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+
+                <span *ngIf="keyItem.type == 'buttonList'" [ngStyle]="{'display': 'inline-block','width':keyItem.buttons.length*70+'px'}">
+					<span *ngFor="let btn  of keyItem.buttons">
+						<button nz-button  style="margin-right: 10px;" (click)="editFun(item,btn.index)">
+							{{btn.text}}
+						</button>
+					</span>
+                </span>
+
+                <span *ngIf="keyItem.type == 'btnName'">
+					<a (click)="viewFun(item,keyItem.btnType)">
+						{{item[keyItem.name]}}
+					</a>
+                </span>
+
+                <span *ngIf="keyItem.type == 'popUp'" class="popUp" (click)="popUpFun(item)">
+					{{ item[keyItem.name]}}
+				</span>
+
+                <span *ngIf="keyItem.type == 'check'">
+					<button
+						nz-button
+						class=""
+						*ngIf="item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button
+						nz-button
+						class=""
+						*ngIf="!item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+				</span>
+
+                <span *ngIf="keyItem.type == 'check&edit'">
+					<button
+						nz-button
+						class=""
+						*ngIf="item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button
+						nz-button
+						class=""
+						*ngIf="!item.enable"
+						(click)="checkFun(item)">
+						{{ item.enable ? "停用" : "启用" }}
+					</button>
+					<button nz-button class="" (click)="editFun(item)">
+						编 辑
+					</button>
+				</span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

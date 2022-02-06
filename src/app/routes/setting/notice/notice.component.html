@@ -1,0 +1,81 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<nz-card>
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (editFuncOut)="editFun($event)"></table-template>
+</nz-card>
+
+
+<nz-modal [(nzVisible)]="isVisibleAdd" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="规则集名称" error="请输入规则集名称!" required>
+                <input nz-input type="text" placeholder="请输入规则集名称" [(ngModel)]="rule.setName" name="setName" />
+            </se>
+            <!-- <se label="规则集类型">
+                <nz-select style="min-width: 80px;" nzPlaceHolder="选择规则集类型" [(ngModel)]="rule.type" name="type">
+                    <nz-option *ngFor="let item of typeList" [nzLabel]="item.name" [nzValue]="item.val">
+                    </nz-option>
+                </nz-select>
+            </se> -->
+            <!-- <se label="运营中心" error="运营中心" required>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择运营中心" name="operateInfoId" [(ngModel)]="rule.operateInfoId">
+                        <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </se> -->
+        </form>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isVisibleAdd" nzWidth="1000px" nzTitle="添加规则集" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <div nz-row style="margin-bottom: 20px;">
+            <div nz-col style="width: 160px;font-size: 18px;font-weight: bold;"> 规则集名称 </div>
+            <div nz-col nzSpan="12"> <input nz-input type="text" placeholder="请输入规则集名称" [(ngModel)]="rule.setName" name="setName" /> </div>
+        </div>
+        <div *ngFor="let item of noticeListAdd" style="border-bottom: 1px solid #eee;margin-bottom: 20px;padding-bottom: 10px;">
+            <p>
+                <span style="font-size: 18px;font-weight: bold;">
+                    {{item.levelName}}级联系人
+                </span>
+            </p>
+            <div nz-row *ngFor="let cItem of item.list">
+                <div nz-col class="gutter-row " style="width: 180px;text-align: right;padding-right: 40px;font-size: 16px;font-weight: bold;">{{messageTypeMap[cItem.messageType]}}</div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasPhone">电话</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasSMS">短信</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasWebPush">网页推送</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasWeixin">微信</label></div>
+            </div>
+        </div>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isVisibleEdit" nzWidth="1000px" nzTitle="编辑规则" (nzOnCancel)="editCancel()" (nzOnOk)="editOk()">
+    <ng-container *nzModalContent>
+        <div nz-row style="margin-bottom: 20px;">
+            <div nz-col style="width: 160px;font-size: 18px;font-weight: bold;"> 规则集名称 </div>
+            <div nz-col nzSpan="12"> <input nz-input type="text" placeholder="请输入规则集名称" [(ngModel)]="editItem.setName" name="setName" /> </div>
+        </div>
+        <div *ngFor="let item of dataSetRule" style="border-bottom: 1px solid #eee;margin-bottom: 20px;padding-bottom: 10px;">
+            <p>
+                <span style="font-size: 18px;font-weight: bold;">
+                    {{item.levelName}}级联系人
+                </span>
+            </p>
+            <div nz-row *ngFor="let cItem of item.list">
+                <div nz-col class="gutter-row " style="width: 180px;text-align: right;padding-right: 40px;font-size: 16px;font-weight: bold;">{{messageTypeMap[cItem.messageType]}}</div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasPhone">电话</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasSMS">短信</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasWebPush">网页推送</label></div>
+                <div nz-col class="gutter-row " style="width: 160px;"><label nz-checkbox [(ngModel)]="cItem.hasWeixin">微信</label></div>
+            </div>
+        </div>
+    </ng-container>
+</nz-modal>

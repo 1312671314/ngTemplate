@@ -1,0 +1,117 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+    </ng-template>
+</page-header>
+
+<form nz-form class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">联网单位</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="orgName" name="orgName" placeholder="请输入联网单位" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">设备类型</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择设备类型" name="status" [(ngModel)]="deviceType">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option *ngFor="let item of deviceTypeArr" [nzLabel]="item.name" [nzValue]="item.name">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col nzMd="4" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">通信状态</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="服务状态" name="status" [(ngModel)]="offline">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option nzLabel="在线" nzValue=true></nz-option>
+                        <nz-option nzLabel="离线" nzValue=false></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">运营中心</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择运营中心" name="status" [(ngModel)]="operateId">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="6" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">解除隔离提醒</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzPlaceHolder="解除隔离提醒时间" name="status" [(ngModel)]="isolateRemindEndDay">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option nzLabel="近三天" nzValue="3"></nz-option>
+                        <nz-option nzLabel="已过期" nzValue="0"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+    </div>
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }" style="padding-bottom: 10px;">
+        <div nz-col nzMd="8" nzSm="24">
+            <button nz-button nzType="primary" (click)="search()">
+              <i class="anticon anticon-search"></i>查询
+          </button>
+            <button nz-button nzType="primary" (click)="rest()">
+              <i class="anticon anticon-export"></i>重置
+          </button>
+            <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="opMenu">
+			<i class="anticon anticon-export"></i>批量操作
+		</button>
+            <nz-dropdown-menu #opMenu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item (click)="batchOperation(2)">解除隔离</li>
+                </ul>
+            </nz-dropdown-menu>
+        </div>
+    </div>
+
+
+</form>
+
+<table-template [tableType]="'rowSelectionTableAll'" [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"
+    (checkBoxOut)="checkBoxFun($event)" (popUpFunOut)="popUpFun($event)"></table-template>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="您确定解除隔离设备" nzWidth="620px" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <div *ngIf="isBatch">
+            <span *ngFor="let item of checkList">
+				<b *ngIf="item.checked">
+                    设备:{{item.deviceType}} 编号:{{ item.serialNum}} 
+				</b>
+			</span>
+        </div>
+        <div *ngIf="!isBatch">
+            <b>
+                设备:{{editItem.deviceType}} 编号:{{ editItem.serialNum}} 
+			</b>
+        </div>
+
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isVisibleStatus" nzTitle="实时数据" nzWidth="800px" [nzFooter]="null" (nzOnCancel)="statusCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <!-- <nz-card nzTitle=""> -->
+        <table-template [dataList]="statusList" [theadList]="teadList2" [total]="total2" [pageIndex]="pageIndex" [keyNameList]="keyNameList2" [pageSize]="pageSize" (pageIndexOut)="turnPage2($event)"></table-template>
+        <!-- </nz-card> -->
+    </ng-container>
+</nz-modal>

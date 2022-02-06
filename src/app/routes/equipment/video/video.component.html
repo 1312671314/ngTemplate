@@ -1,0 +1,163 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <!-- <button (click)="add()" nz-button nzType="primary">新建</button> -->
+    </ng-template>
+</page-header>
+
+<form nz-form class="search__form">
+    <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="no">联网单位</nz-form-label>
+                <nz-form-control>
+                    <input nz-input [(ngModel)]="orgName" name="orgName" placeholder="请输入联网单位" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">通信状态</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择服务状态" name="status" [(ngModel)]="offline">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option nzLabel="在线" nzValue=true></nz-option>
+                        <nz-option nzLabel="离线" nzValue=false></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="5" nzSm="24">
+            <nz-form-item>
+                <nz-form-label nzFor="type">运营中心</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择运营中心" name="status" [(ngModel)]="operateId">
+                        <nz-option nzLabel="全部" nzValue="-1"></nz-option>
+                        <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzMd="6" nzSm="24">
+            <button nz-button nzType="primary" (click)="search()">
+                <i class="anticon anticon-search"></i>查询
+            </button>
+            <button nz-button nzType="primary" (click)="rest()">
+                <i class="anticon anticon-export"></i>重置
+            </button>
+            <button nz-button nzType="primary" (click)="add()">
+                <i class="anticon anticon-add"></i>添加
+            </button>
+        </div>
+    </div>
+
+</form>
+
+
+<table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+
+
+<nz-modal [(nzVisible)]="isVisibleDetail" nzTitle="修改信息" nzWidth="620px" (nzOnCancel)="handleCancel2()" (nzOnOk)="handleOk2()">
+    <ng-container *nzModalContent>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                设备验证码:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入验证码" [(ngModel)]="checkCode" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                流畅URL:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入流畅URL" [(ngModel)]="flowUrl" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                高清URL:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入高清URL" [(ngModel)]="hdUrl" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                回放URL:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入回放URL" [(ngModel)]="replayUrl" />
+            </nz-col>
+        </nz-row>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="isVisibleaAddVideo" nzTitle="添加视频设备" nzWidth="620px" (nzOnCancel)="addCancel()" (nzOnOk)="addOk()">
+    <ng-container *nzModalContent>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                设备验证码:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入验证码" [(ngModel)]="checkCode2" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                设备序列号:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入设备序列号" [(ngModel)]="serialNum" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                安装位置:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入安装位置" [(ngModel)]="place" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                关联联网单位:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-select style="width: 200px;" [nzAllowClear]=true nzShowSearch nzServerSearch nzPlaceHolder="请输入联网单位" [(ngModel)]="orgInfo" (nzOnSearch)="searchOrg($event)">
+                    <nz-option *ngFor="let org of orgList" [nzLabel]="org.orgName" [nzValue]="org"></nz-option>
+                </nz-select>
+            </nz-col>
+        </nz-row>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleInfo" nzTitle="设备详情" nzWidth="800px" (nzOnOk)="onOk()" (nzOnCancel)="cancel()">
+    <ng-container *nzModalContent>
+
+    </ng-container>
+</nz-modal>
+<!-- <div className="demo">
+    <h2>视频模式使用示例：</h2>
+    <div id="video-container" style="width:800px;">
+    </div>
+    <div>
+        <button (click)="play()">play</button>
+        <button (click)="stop()">stop</button>
+        <button (click)="getOSDTime()">getOSDTime</button>
+        <button (click)="capturePicture()">capturePicture</button>
+        <button (click)="openSound()">openSound</button>
+        <button (click)="closeSound()">closeSound</button>
+        <button (click)="startSave()">startSave</button>
+        <button (click)="stopSave()">stopSave</button>
+        <button (click)="fullScreen()">全屏</button>
+    </div>
+</div> -->

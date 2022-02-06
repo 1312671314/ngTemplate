@@ -1,0 +1,54 @@
+<page-header>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            首页
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item (click)="back()">
+            <a>合同列表</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            添加合同
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</page-header>
+<nz-card>
+    <nz-row>
+        <form nz-form #f="ngForm" se-container="2">
+            <se-title>合同信息</se-title>
+            <se label="联网单位" error="请输入联网单位!" required>
+                <nz-select nzShowSearch nzServerSearch nzPlaceHolder="请输入联网单位" [(ngModel)]="data.org" name="org" [nzFilterOption]="nzFilterOption" (nzOnSearch)="search($event)">
+                    <nz-option *ngFor="let org of listOfOption" [nzLabel]="org.orgName" [nzValue]="org"></nz-option>
+                </nz-select>
+            </se>
+
+            <se label="合同编号" error="请输入合同编号!" required>
+                <input nz-input type="text" placeholder="请输入合同编号" [(ngModel)]="data.contractSerial" name="contractSerial" />
+            </se>
+            <se label="商务人员" error="请输入商务人员!" required>
+                <input nz-input type="text" placeholder="请输入商务人员" [(ngModel)]="data.businessUserName" name="businessUserName" />
+            </se>
+            <se label="商务人员电话" error="请输入商务人员电话!" required>
+                <input nz-input type="text" placeholder="请输入商务人员电话" [(ngModel)]="data.businessUserPhone" name="businessUserPhone" />
+            </se>
+
+            <se label="关联保单号" error="请输入关联保单号!" required>
+                <input nz-input type="text" placeholder="请输入关联保单号" [(ngModel)]="data.insuranceSerial" name="insuranceSerial" />
+            </se>
+            <!-- <se-title>服务信息</se-title> -->
+            <se label="合同开始时间">
+                <nz-range-picker [(ngModel)]="time" name="time" (ngModelChange)="onChangeTime($event)"></nz-range-picker>
+            </se>
+            <se label="服务时间">
+                <nz-range-picker [(ngModel)]="serveTime" name="serveTime" (ngModelChange)="onChangeServeTime($event)"></nz-range-picker>
+            </se>
+            <se label="上传合同文本">
+                <file-upload [uploadType]="'file'" [fileList]="fileList" (fileListOut)="getFileList($event)"></file-upload>
+            </se>
+            <se col="1">
+                <button nz-button nzType="primary" [disabled]="f.invalid" (click)="add()">确定</button>
+                <button nz-button [disabled]="f.invalid" (click)="back()">返回</button>
+            </se>
+        </form>
+
+    </nz-row>
+</nz-card>

@@ -1,0 +1,133 @@
+<page-header>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            首页
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item (click)="back()">
+            <a>系统设备列表</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            设备详情
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</page-header>
+<nz-card nzTitle="设备详情">
+    <!-- <h5 class="h5">
+    </h5> -->
+    <nz-row>
+        <nz-col nzSpan="6" style="text-align: center;">
+            <img src="{{deviceInfo.typeImg}}" style=" height: 100%;max-height: 200px;">
+        </nz-col>
+        <nz-col nzSpan="9">
+            <sv-container size="small" col="1">
+                <sv label="点位编号">{{deviceInfo.serialNum}}</sv>
+                <sv label="点位型号">{{deviceInfo.deviceTypeName}} </sv>
+                <sv label="生产厂家">{{deviceInfo.factory}}</sv>
+                <sv label="服务时间">{{orgInfo.serveStartTime | date:'yyyy年MM月dd日'}}</sv>
+                <sv label="到期时间">{{orgInfo.serveEndTime | date:'yyyy年MM月dd日'}}</sv>
+                <sv label="通信方式">{{deviceInfo.wanConnType}}</sv>
+                <sv label="通信状态">{{deviceInfo.offlineText}}</sv>
+                <sv label="是否被拆">{{deviceInfo.detachedText}}</sv>
+            </sv-container>
+        </nz-col>
+        <nz-col nzSpan="9">
+            <sv-container size="small" col="1">
+                <sv label="工作状态">{{deviceInfo.workStatusText}}</sv>
+                <sv label="供电方式">{{deviceInfo.powerStatusText}} </sv>
+                <sv label="联动设备">
+                    <button nz-button (click)="showRelative()">查看设备</button>
+                </sv>
+                <sv label="关联网关">{{deviceInfo.gatewayNo}}</sv>
+                <sv label="网关位置">{{deviceInfo.place}}</sv>
+                <sv label="联网单位">{{orgInfo.orgName}}</sv>
+            </sv-container>
+        </nz-col>
+    </nz-row>
+</nz-card>
+
+<nz-card nzTitle="所属点位列表" *ngIf="isShowPointList">
+    <table-template [dataList]="pointList" [theadList]="pointTeadList" [keyNameList]="pointKeyNameList" [pageSize]="'10000'"></table-template>
+</nz-card>
+
+<nz-card nzTitle="实时参数">
+    <table-template [dataList]="statusList" [theadList]="teadList2" [total]="total2" [keyNameList]="keyNameList2" [pageSize]="'10000'"></table-template>
+</nz-card>
+
+<nz-card nzTitle="操作控制台">
+    <!-- 只支持声光报警操作，服务端其他暂不支持 -->
+    <!-- 烟感 -->
+    <button (click)="setDevice()" *ngIf="deviceType==1 || deviceType==6" nz-button nzType="primary">复位</button>
+    <button (click)="setDevice()" *ngIf="deviceType==1 || deviceType==6" nz-button nzType="primary">重启</button>
+    <!-- 声光报 -->
+    <button (click)="setDevice(1)" *ngIf="deviceType==3" nz-button nzType="primary">启动</button>
+    <button (click)="setDevice(0)" *ngIf="deviceType==3" nz-button nzType="primary">停止</button>
+    <button (click)="setDevice(3)" *ngIf="deviceType==3" nz-button nzType="primary">隔离</button>
+    <!-- 电器感 -->
+    <button (click)="setDevice()" *ngIf="deviceType==5" nz-button nzType="primary">合闸</button>
+    <button (click)="setDevice()" *ngIf="deviceType==5" nz-button nzType="primary">分闸</button>
+    <button (click)="setDevice()" *ngIf="deviceType==5" nz-button nzType="primary">分闸锁定</button>
+    <button (click)="setDevice()" *ngIf="deviceType==5" nz-button nzType="primary">调值</button>
+    <!-- 燃气 -->
+    <button (click)="setDevice()" *ngIf="deviceType==6" nz-button nzType="primary">自检</button>
+</nz-card>
+
+<nz-card nzTitle="历史记录" [nzExtra]="typeSelect">
+    <ng-template #typeSelect>
+        记录类型:
+        <nz-select style="width: 120px;" nzShowSearch nzPlaceHolder="选择记录类型" name="type" [(ngModel)]="type" (ngModelChange)="historyTypeOnChange($event)">
+            <nz-option *ngFor="let item of historyTypeList" [nzLabel]="item.name" [nzValue]="item.val">
+            </nz-option>
+        </nz-select>
+    </ng-template>
+
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)"></table-template>
+</nz-card>
+
+
+
+<parameter [title]="'联动设备'" [isVisible]="isVisibleRelative" [statusList]="deviceList" [theadList]="deviceTeadList" [keyNameList]="deviceKeyNameList" (isVisibleOut)="isVisibleOut($event)" (editFuncOut)="viewDevice($event)"></parameter>
+
+<nz-modal [(nzVisible)]="isVisibleStop" nzTitle="操作提示" (nzOnCancel)="Cancel()" (nzOnOk)="OkStop()">
+    <ng-container *nzModalContent>
+        确定要停止 <span style="font-size: 18px;font-weight: bold;"> {{deviceInfo.deviceTypeName}} </span> 设备吗
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleStart" nzTitle="操作提示" (nzOnCancel)="startCancel()" (nzOnOk)="OkStart()">
+    <ng-container *nzModalContent>
+        确定要启动 <span style="font-size: 18px;font-weight: bold;"> {{deviceInfo.deviceTypeName}} </span> 设备吗
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="隔离原因" nzWidth="620px" (nzOnCancel)="handleCancel2()" (nzOnOk)="handleOk2()">
+    <ng-container *nzModalContent>
+
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                选择原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-checkbox-group [(ngModel)]="checkOptionsRowOne" (ngModelChange)="checkOptionsChangesThree(checkOptionsRowThree)"></nz-checkbox-group>
+                <br/>
+                <br/>
+            </nz-col>
+        </nz-row>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                其他原因:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <input nz-input placeholder="请输入其他原因" [(ngModel)]="checkRemark" />
+            </nz-col>
+        </nz-row>
+        <br/>
+        <nz-row>
+            <nz-col nzSpan="5" style="text-align: right; padding-right: 20px;">
+                解除隔离提醒:
+            </nz-col>
+            <nz-col nzSpan="19">
+                <nz-date-picker [(ngModel)]="isolateRemindEndTime" (ngModelChange)="dateOnChange($event)"></nz-date-picker>
+            </nz-col>
+        </nz-row>
+    </ng-container>
+</nz-modal>

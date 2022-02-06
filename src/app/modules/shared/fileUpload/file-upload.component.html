@@ -1,0 +1,17 @@
+<nz-upload *ngIf="uploadType=='img'" [nzBeforeUpload]="beforeUpload" [nzListType]="'picture-card'" [nzRemove]="removeImg" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < imgSize" [nzPreview]="handlePreview">
+    <i class="anticon anticon-plus"></i>
+    <div class="ant-upload-text">上传</div>
+</nz-upload>
+<nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="previewVisible=false">
+    <ng-template #modalContent>
+        <img [src]="previewImage" [ngStyle]="{ 'width': '100%' }" />
+    </ng-template>
+</nz-modal>
+
+
+<nz-upload *ngIf="uploadType=='file'" [nzShowUploadList]="{showDownloadIcon:false,showRemoveIcon:true}" [nzFileList]="fileList" [nzShowButton]="fileList.length < fileSize" nzAction="{{upUrl}}fileUpload/uploadByFormData" (nzChange)="handleChange($event)">
+    <button nz-button onsubmit="return false">
+        <i nz-icon nzType="upload"></i>
+        上传文件
+    </button>
+</nz-upload>

@@ -1,0 +1,50 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<nz-card>
+
+    <nz-tabset nzType="card" [(nzSelectedIndex)]="typeIndex">
+        <nz-tab nzTitle="设备字典">
+            <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (editFuncOut)="editFun($event)"></table-template>
+        </nz-tab>
+        <nz-tab nzTitle="风险源字典">
+            <table-template [dataList]="dataSetRiskSource" [theadList]="teadList2" [total]="total" [pageIndex]="pageIndexRiskSource" [keyNameList]="keyNameList2" [pageSize]="pageSizeRiskSource" (editFuncOut)="editFun2($event)"></table-template>
+        </nz-tab>
+    </nz-tabset>
+</nz-card>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="字典名称" error="请输入字典名称!" required>
+                <input nz-input type="text" placeholder="请输入字典名称" [(ngModel)]="dictionaries.name" name="name" />
+            </se>
+
+            <se label="字典单位" error="请输入字典单位!" required>
+                <input nz-input type="text" placeholder="请输字典入单位" [(ngModel)]="dictionaries.unit" name="unit" />
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleRiskSource" nzWidth="800px" nzTitle="操作" (nzOnCancel)="riskSourceCancel()" (nzOnOk)="riskSourceOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="字典名称" error="请输入字典名称!" required>
+                <input nz-input type="text" placeholder="请输入字典名称" [(ngModel)]="dictionaries.name" name="name" />
+            </se>
+
+            <se label="风险源等级" error="请输入风险源等级!" required>
+                <input nz-input type="number" placeholder="请输风险源等级(整数)" [(ngModel)]="dictionaries.level" name="level" />
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+
+<!-- <nz-modal [(nzVisible)]="isVisibleDelete" nzTitle="操作提示" (nzOnCancel)="deleteCancel()" (nzOnOk)="deleteOk()">
+    确定要删除{{dictionaries.name}}字典吗？
+</nz-modal> -->

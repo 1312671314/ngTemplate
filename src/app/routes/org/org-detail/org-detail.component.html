@@ -1,0 +1,447 @@
+<page-header *ngIf="needHead">
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            首页
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item (click)="back()">
+            <a>单位列表</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            单位详情
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</page-header>
+<nz-card>
+    <nz-tabset [nzTabPosition]="'left'">
+        <nz-tab [nzTitle]="tab.name" *ngFor="let tab of tabs" (nzSelect)="tabChange(tab)">
+            <div *ngIf="tab.temp==1">
+                <nz-row>
+                    <form nz-form #f="ngForm" se-container="2">
+                        <se-title>工商信息</se-title>
+                        <se label="单位全称" error="请输入单位全称!" required>
+                            <input nz-input type="text" placeholder="请输入单位全称" [(ngModel)]="data.orgName" name="orgName" />
+                        </se>
+
+                        <se label="信用代码" error="请输入信用代码!">
+                            <input nz-input type="text" placeholder="请输入信用代码" [(ngModel)]="data.certSerial" name="certSerial" />
+                        </se>
+                        <se label="单位电话" error="请输入单位电话!">
+                            <input nz-input type="text" placeholder="请输入单位电话" [(ngModel)]="data.tel" name="tel" />
+                        </se>
+                        <se label="企业种类">
+                            <nz-select style="min-width: 80px;" nzPlaceHolder="选择企业种类" [(ngModel)]="data.ownershipType" name="ownershipType">
+                                <nz-option *ngFor="let item of orgTypeArr" [nzLabel]="item.name" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+                        <se label="所属辖区" col="1">
+                            <location-select [locationInfo]="location" [sizes]="6" (onLocationSelect)="onLocationSelect($event)">
+                            </location-select>
+                        </se>
+                        <!-- <se label="单位地址" col="1">
+                            <input nz-input type="text" placeholder="请输入单位地址" [(ngModel)]="data.address" name="address" />
+                        </se> -->
+                        <se label="详细地址" col="1" required>
+                            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="width:50%">
+                                <input nz-input type="text" placeholder="请输入单位地址" [(ngModel)]="data.address" name="address" />
+                            </nz-input-group>
+                            <ng-template #suffixIconButton>
+                                <button nz-button nzType="primary" (click)="showMap()" nzSearch>
+                                  <svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="environment" aria-hidden="true"><path d="M854.6 289.1a362.49 362.49 0 00-79.9-115.7 370.83 370.83 0 00-118.2-77.8C610.7 76.6 562.1 67 512 67c-50.1 0-98.7 9.6-144.5 28.5-44.3 18.3-84 44.5-118.2 77.8A363.6 363.6 0 00169.4 289c-19.5 45-29.4 92.8-29.4 142 0 70.6 16.9 140.9 50.1 208.7 26.7 54.5 64 107.6 111 158.1 80.3 86.2 164.5 138.9 188.4 153a43.9 43.9 0 0022.4 6.1c7.8 0 15.5-2 22.4-6.1 23.9-14.1 108.1-66.8 188.4-153 47-50.4 84.3-103.6 111-158.1C867.1 572 884 501.8 884 431.1c0-49.2-9.9-97-29.4-142zM512 880.2c-65.9-41.9-300-207.8-300-449.1 0-77.9 31.1-151.1 87.6-206.3C356.3 169.5 431.7 139 512 139s155.7 30.5 212.4 85.9C780.9 280 812 353.2 812 431.1c0 241.3-234.1 407.2-300 449.1zm0-617.2c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm79.2 255.2A111.6 111.6 0 01512 551c-29.9 0-58-11.7-79.2-32.8A111.6 111.6 0 01400 439c0-29.9 11.7-58 32.8-79.2C454 338.6 482.1 327 512 327c29.9 0 58 11.6 79.2 32.8C612.4 381 624 409.1 624 439c0 29.9-11.6 58-32.8 79.2z"></path></svg>
+                                </button>
+                            </ng-template>
+                        </se>
+                        <se label="单位法人">
+                            <input nz-input type="text" placeholder="请输入单位法人" [(ngModel)]="data.legalPerson" name="legalPerson" />
+                        </se>
+                        <!-- <se label="法人电话" required>
+                                <input nz-input type="text" placeholder="请输入法人电话" [(ngModel)]="data.tel" name="tel" />
+                            </se> -->
+                        <se label="所属行业">
+                            <nz-select style="min-width: 80px;" nzPlaceHolder="选择所属行业" [(ngModel)]="data.industry" name="industry">
+                                <nz-option *ngFor="let item of industryArr" [nzLabel]="item.name" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+                        <se label="物业类型">
+                            <nz-select style="min-width: 80px;" nzPlaceHolder="选择物业类型" [(ngModel)]="data.industryCategory" name="industryCategory">
+                                <nz-option *ngFor="let item of industryCategoryArr" [nzLabel]="item.name" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+                        <se label="营业状态">
+                            <nz-select style="min-width: 80px;" nzPlaceHolder="选择营业状态" [(ngModel)]="data.businessStatus" name="businessStatus">
+                                <nz-option *ngFor="let item of businessArr" [nzLabel]="item.name" [nzValue]="item.val">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+                        <se-title>服务信息</se-title>
+
+                        <se label="单位简称" error="请输入单位简称!">
+                            <input nz-input type="text" placeholder="请输入单位简称" [(ngModel)]="data.orgShortName" name="orgShortName" />
+                        </se>
+                        <se label="运营中心" required>
+                            <nz-select nzShowSearch nzPlaceHolder="选择运营中心" name="operateId" [(ngModel)]="data.operateId">
+                                <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+
+                        <se label="推送规则" required>
+                            <nz-select nzShowSearch nzPlaceHolder="选择推送规则" name="notifyRuleSetId" [(ngModel)]="data.notifyRuleSetId">
+                                <nz-option *ngFor="let item of notifyRuleList" [nzLabel]="item.setName" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </se>
+
+                        <se label="服务时间">
+                            <nz-range-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+                        </se>
+                        <se-title>图片信息</se-title>
+                        <se label="联网单位Logo">
+                            <file-upload [fileList]="logoImg" [imgSize]="'1'" (fileListOut)="getLogoImg($event)"></file-upload>
+                        </se>
+                        <se label="营业执照图片">
+                            <file-upload [fileList]="certImage" [imgSize]="'1'" (fileListOut)="getCertImage($event)"></file-upload>
+                        </se>
+                        <se label="门头图片">
+                            <file-upload [fileList]="doorwayImages" [imgSize]="'5'" (fileListOut)="getDoorwayImages($event)"></file-upload>
+                        </se>
+                        <!-- <se col="1">
+                            <button nz-button nzType="primary" [disabled]="f.invalid">保存</button>
+                        </se> -->
+                        <se col="1" style="text-align: center;">
+                            <button nz-button nzType="primary" [disabled]="f.invalid" (click)="update()">确定</button>
+                            <button nz-button (click)="back()">取消</button>
+                        </se>
+                    </form>
+                </nz-row>
+            </div>
+            <div *ngIf="tab.temp==2">
+                <h5>
+                    <button nz-button nzType="primary" (click)="addBuild()">添加建筑信息</button>
+                </h5>
+                <!-- 建筑信息 -->
+                <table-template [dataList]="dataSet2" [theadList]="teadList2" [total]="total2" [pageIndex]="pageIndex2" [keyNameList]="keyNameList2" [pageSize]="pageSize2" (editFuncOut)="editFun2($event)" (viewImgOut)="viewImg($event)"></table-template>
+                <nz-modal [(nzVisible)]="isVisible2" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel2()" (nzOnOk)="handleOk2()">
+                    <ng-container *nzModalContent>
+                        <form nz-form #f="ngForm" se-container="1">
+                            <se label="建筑名称" error="请输入建筑名称!">
+                                <input nz-input type="text" placeholder="请输入建筑名称" [(ngModel)]="bulid.name" name="name" />
+                            </se>
+                            <se label="楼层数量" error="请输入楼层数量!">
+                                <input nz-input type="text" placeholder="请输入楼层数量" [(ngModel)]="bulid.floor" name="floor" />
+                            </se>
+                            <se label="房间数量" error="请输入房间数量!">
+                                <input nz-input type="number" placeholder="请输入房间数量" [(ngModel)]="bulid.roomsNumber" name="roomsNumber" />
+                            </se>
+                            <se label="面积(平方米)" error="请输入面积(平方米)!">
+                                <input nz-input type="number" placeholder="请输入面积(平方米)" [(ngModel)]="bulid.square" name="square" />
+                            </se>
+                            <se label="建筑材料" error="选择建筑材料!">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择建筑材料" [(ngModel)]="bulid.material" name="material">
+                                    <nz-option *ngFor="let item of materialArr" [nzLabel]="item.name" [nzValue]="item.id">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="建筑属性" error="请输入建筑属性!">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择建筑属性" [(ngModel)]="bulid.buildAttribute" name="buildAttribute">
+                                    <nz-option *ngFor="let item of buildAttributeArr" [nzLabel]="item.name" [nzValue]="item.id">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="建筑照片">
+                                <file-upload [fileList]="fileList" [imgSize]="imgSize" (fileListOut)="getFileList($event)"></file-upload>
+                            </se>
+                            <!-- <se label="建筑平面图">
+                                <file-upload [uploadType]="'file'" [fileList]="blueprint" imgSize="10" (fileListOut)="getBlueprint($event)"></file-upload>
+                            </se> -->
+                            <se label="建筑疏散指示图">
+                                <file-upload [fileList]="evacuationImages" [imgSize]="imgSize" (fileListOut)="getEvacuationImages($event)"></file-upload>
+                            </se>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+
+
+            </div>
+            <div *ngIf="tab.temp==3">
+                <table-template [dataList]="dataSet2" [theadList]="teadList3" [total]="total3" [pageIndex]="pageIndex3" [keyNameList]="keyNameList3" [pageSize]="pageSize3" (editFuncOut)="editFun3($event)" (viewImgOut)="viewImg3($event)"></table-template>
+            </div>
+            <div *ngIf="tab.temp==4">
+                <!-- 合同 -->
+                <!-- <h5>
+                    <button nz-button nzType="primary" (click)="addContractInfo()">添加合同</button>
+                </h5> -->
+                <table-template [dataList]="dataSet4" [theadList]="teadList4" [total]="total4" [pageIndex]="pageIndex4" [keyNameList]="keyNameList4" [pageSize]="pageSize4" (pageIndexOut)="turnPage4($event)" (editFuncOut)="editFun4($event)"></table-template>
+                <nz-modal [(nzVisible)]="isVisible4" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel4()" (nzOnOk)="handleOk4()">
+                    <ng-container *nzModalContent>
+                        <nz-row>
+                            <form nz-form #f="ngForm" se-container="2">
+                                <se-title>合同信息</se-title>
+
+                                <se label="合同编号" error="请输入合同编号!" required>
+                                    <input nz-input type="text" placeholder="请输入合同编号" [(ngModel)]="contractInfo.contractSerial" name="contractSerial" />
+                                </se>
+                                <se label="商务人员" error="请输入商务人员!" required>
+                                    <input nz-input type="text" placeholder="请输入商务人员" [(ngModel)]="contractInfo.businessUserName" name="businessUserName" />
+                                </se>
+                                <se label="商务人员电话" error="请输入商务人员电话!" required>
+                                    <input nz-input type="text" placeholder="请输入商务人员电话" [(ngModel)]="contractInfo.businessUserPhone" name="businessUserPhone" />
+                                </se>
+
+                                <se label="关联保单号" error="请输入关联保单号!" required>
+                                    <input nz-input type="text" placeholder="请输入关联保单号" [(ngModel)]="contractInfo.insuranceSerial" name="insuranceSerial" />
+                                </se>
+                                <!-- <se-title>服务信息</se-title> -->
+                                <se label="合同开始时间">
+                                    <nz-range-picker [(ngModel)]="contractInfoTime" name="time" (ngModelChange)="onChangeContractInfoTime($event)"></nz-range-picker>
+                                </se>
+                                <se label="服务时间">
+                                    <nz-range-picker [(ngModel)]="contractInfoServeTime" name="serveTime" (ngModelChange)="onChangeContractInfoServeTime($event)"></nz-range-picker>
+                                </se>
+
+                                <se label="上传合同文本">
+                                    <!-- <file-upload [fileList]="fileList" (fileListOut)="getFileList($event)"></file-upload> -->
+                                </se>
+                                <!-- <se col="1">
+                                    <button nz-button nzType="primary" [disabled]="f.invalid">创建</button>
+                                </se> -->
+                            </form>
+                        </nz-row>
+                    </ng-container>
+                </nz-modal>
+
+
+            </div>
+            <div *ngIf="tab.temp==5">
+                <h5>
+                    <button nz-button nzType="primary" (click)="addRiskSource()">添加风险源</button>
+                </h5>
+                <table-template [dataList]="dataSet5" [theadList]="teadList5" [total]="total5" [pageIndex]="pageIndex5" [keyNameList]="keyNameList5" [pageSize]="pageSize5" (pageIndexOut)="turnPage5($event)" (editFuncOut)="editFun5($event)"></table-template>
+
+                <nz-modal [(nzVisible)]="isVisible5" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel5()" (nzOnOk)="handleOk5()">
+                    <ng-container *nzModalContent>
+                        <form nz-form #f="ngForm" se-container="1">
+                            <se label="选择风险源">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择风险源" [(ngModel)]="riskSource.riskSourceId" name="riskSourceId">
+                                    <nz-option *ngFor="let item of riskSourceAll" [nzLabel]="item.name" [nzValue]="item.id">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="风险源位置" error="请输入风险源位置!">
+                                <input nz-input type="text" placeholder="请输入风险源位置" [(ngModel)]="riskSource.position" name="position" />
+                            </se>
+                            <se label="风险源数量" error="请输入风险源名称!">
+                                <input nz-input type="number" placeholder="请输入风险源数量" [(ngModel)]="riskSource.count" name="count" />
+                            </se>
+                            <!-- <se label="风险源图片">
+
+                            </se> -->
+                        </form>
+                    </ng-container>
+                </nz-modal>
+            </div>
+            <div *ngIf="tab.temp==6">
+                <!-- 消防设施 -->
+                <h5>
+                    <button nz-button nzType="primary" (click)="addEquipment()">添加设备设施</button>
+                </h5>
+                <table-template [dataList]="dataSet6" [theadList]="teadList6" [total]="total6" [pageIndex]="pageIndex6" [keyNameList]="keyNameList6" [pageSize]="pageSize6" (editFuncOut)="editFun6($event)"></table-template>
+
+                <nz-modal [(nzVisible)]="isVisible6" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel6()" (nzOnOk)="handleOk6()">
+                    <ng-container *nzModalContent>
+                        <form nz-form #f="ngForm" se-container="1">
+                            <se label="选择设备设施">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择设备设施" [(ngModel)]="equipment.equipmentInfoId" name="equipmentInfoId">
+                                    <nz-option *ngFor="let item of dictionariesList" [nzLabel]="item.name" [nzValue]="item.id">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="设备数量" error="请输入设备数量!">
+                                <input nz-input type="number" placeholder="请输入设备数量" [(ngModel)]="equipment.count" name="count" />
+                            </se>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+
+            </div>
+            <div *ngIf="tab.temp==7">
+                <h5>
+                    <button nz-button nzType="primary" (click)="addContactInfo()">添加紧急联系人</button>
+                </h5>
+                <table-template [dataList]="dataSet7" [theadList]="teadList7" [total]="total7" [pageIndex]="pageIndex7" [keyNameList]="keyNameList7" [pageSize]="pageSize7" (editFuncOut)="editFun7($event)"></table-template>
+                <nz-modal [(nzVisible)]="isVisible7" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel7()" (nzOnOk)="handleOk7()">
+                    <ng-container *nzModalContent>
+                        <form nz-form #f="ngForm" se-container="1">
+                            <se label="选择紧急联系人" *ngIf="!isEdit">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择紧急联系人" [(ngModel)]="emergencyContact" name="contactInfoId">
+                                    <nz-option *ngFor="let item of dataSet8" [nzLabel]="item.name" [nzValue]="item">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="姓名" error="请输入姓名!" required>
+                                <input nz-input type="text" placeholder="请输入姓名" [(ngModel)]="emergencyContact.name" name="name" />
+                            </se>
+                            <se label="手机号" error="请输入手机号!" required>
+                                <input nz-input type="number" placeholder="请输入手机号" [(ngModel)]="emergencyContact.phone" name="phone" />
+                            </se>
+                            <se label="通知等级" error="通知等级!" required>
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择通知等级" [(ngModel)]="emergencyContact.level" (ngModelChange)="levelChange($event)" name="level">
+                                    <nz-option *ngFor="let item of levelList" [nzLabel]="item.levelName" [nzValue]="item.level">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+            </div>
+            <div *ngIf="tab.temp==8">
+                <h5>
+                    <button nz-button nzType="primary" (click)="addAccount()">添加账号</button>
+                </h5>
+                <table-template [dataList]="dataSet8" [theadList]="teadList8" [total]="total8" [pageIndex]="pageIndex8" [keyNameList]="keyNameList8" [pageSize]="pageSize8" (pageIndexOut)="turnPage8($event)" (editFuncOut)="editFun8($event)"></table-template>
+
+                <nz-modal [(nzVisible)]="isVisible8" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel8()" (nzOnOk)="handleOk8()">
+                    <ng-container *nzModalContent>
+                        <form nz-form #f="ngForm" se-container="1">
+                            <se label="姓名" error="请输入姓名!" required>
+                                <input nz-input type="text" placeholder="请输入姓名" [(ngModel)]="account.name" name="name" />
+                            </se>
+                            <se label="手机号" error="请输入手机号!" required>
+                                <input nz-input type="number" placeholder="请输入手机号" [(ngModel)]="account.phone" name="phone" />
+                            </se>
+                            <se label="选择角色">
+                                <nz-select style="min-width: 80px;" nzPlaceHolder="选择角色" [(ngModel)]="account.charactarId" name="charactarId">
+                                    <nz-option *ngFor="let item of charactarList" [nzLabel]="item.name" [nzValue]="item.id">
+                                    </nz-option>
+                                </nz-select>
+                            </se>
+                            <se label="职务" error="请输入职务!" required>
+                                <input nz-input type="text" placeholder="请输入职务" [(ngModel)]="account.position" name="position" />
+                            </se>
+                        </form>
+                    </ng-container>
+                </nz-modal>
+            </div>
+
+        </nz-tab>
+
+    </nz-tabset>
+</nz-card>
+
+<nz-modal [(nzVisible)]="isVisibleDelete" nzTitle="操作提示" (nzOnCancel)="deleteCancel()" (nzOnOk)="deleteOk()">
+    <ng-container *nzModalContent>
+        确定要删除 <span style="font-size: 18px;font-weight: bold;"> {{emergencyContact.name}} </span> 紧急联系人吗
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleDelete6" nzTitle="操作提示" (nzOnCancel)="deleteCancel6()" (nzOnOk)="deleteOk6()">
+    <ng-container *nzModalContent>
+        确定要删除 <span style="font-size: 18px;font-weight: bold;"> {{equipment.name}} </span> 设备吗
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleImgList" [nzTitle]="imgTitle" nzWidth="500px" (nzOnCancel)="imgListCancel()" (nzOnOk)="imgListOk()">
+    <ng-container *nzModalContent>
+        <file-upload uploadType='img' [fileList]="imgList" imgSize="3" (fileListOut)="getImgList($event)"></file-upload>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="planeImgListShow" [nzTitle]="imgTitle" nzWidth="600px" (nzOnCancel)="planeImgCancel()" [nzFooter]="null">
+    <ng-container *nzModalContent>
+        <button nz-button (click)="addRow()" nzType="primary">添加</button>
+        <br />
+        <br />
+        <!-- <nz-space [nzSize]="12">
+            <img *nzSpaceItem nz-image width="200px" height="200px" [nzSrc]="url" />
+        </nz-space> -->
+        <nz-table #basicTable [nzData]="listOfData">
+            <thead>
+                <tr>
+                    <th nzWidth="30%">楼层</th>
+                    <th>图片文件</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of basicTable.data" class="editable-row">
+                    <td>
+                        {{ data.name }}
+                    </td>
+                    <td>
+                        <!-- <img [src]=""> -->
+                        <!-- <img src="{{data.url}}" style="width: 60px;height: 60px;"> -->
+                        <a target="_blank" href="{{data.url}}">
+                            <img nz-image width="80px" height="80px" [attr.src]="data.url" />
+                        </a>
+                    </td>
+                    <td>
+                        <!-- <button nz-button nzType="primary" (click)="editPlane(data)">编辑
+                        </button> -->
+                        <!-- <a nz-popconfirm nzPopconfirmTitle="确定删除吗?" (nzOnConfirm)="deleteRow(data)">删除</a> -->
+                        <button nzType="primary" nzDanger nz-button nz-popconfirm nzPopconfirmTitle="确定删除吗?" nzPopconfirmPlacement="bottom" (nzOnConfirm)="deleteRow(data.id)">删除
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="planeAddEdit" nzWidth="500px" [nzTitle]="planeAddEditTittle" (nzOnCancel)="planeAddEditCancel()" (nzOnOk)="planeAddEditOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="楼层名称" error="请输入楼层名称!" required>
+                <input nz-input type="text" placeholder="请输入楼层名称" [(ngModel)]="plane.name" name="name" />
+            </se>
+            <!-- <se label="建筑图纸">
+                <file-upload uploadType='img' [fileList]="imgList" imgSize="3" (fileListOut)="getImgList($event)"></file-upload>
+            </se> -->
+            <se label="建筑图纸">
+                <file-upload [fileList]="planeImgList" [imgSize]="'1'" (fileListOut)="getGlaneImgList($event)"></file-upload>
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+
+<div class="map-bg" [ngStyle]="{display:isShowMap}">
+    <div class="bgs">
+        <div class="map-container" [id]="containerId"></div>
+        <div class="input-card" style='width:600px;'>
+            <label style='color:grey'>点击地图获取地址信息</label>
+            <div class="input-item">
+                <div class="input-item-prepend"><span class="input-item-text">经纬度</span></div>
+                <span style="padding-left: 10px;">
+                        纬度:{{latEdit?latEdit:"未选择"}}, 经度:{{lngEdit?latEdit:"未选择"}}
+                    </span>
+            </div>
+            <div class="input-item">
+                <div class="input-item-prepend"><span class="input-item-text">地址</span></div>
+                <span style="padding-left: 10px;width: 600p;">
+                        {{data.address}}
+                    </span>
+            </div>
+            <div id="myPageTop">
+                <table>
+                    <tr>
+                        <td>
+                            <label>救援点(点击地图,搜索地址)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="tipinput" style="width:500px;margin-bottom: 10px;" [(ngModel)]="inputAddress" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="btn-box">
+                <button nz-button (click)="sureAddress()">返回</button>
+                <button nz-button nzType="primary" (click)="sureAddress()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

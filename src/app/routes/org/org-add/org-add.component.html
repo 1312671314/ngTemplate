@@ -1,0 +1,166 @@
+<page-header>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            首页
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item (click)="back()">
+            <a>单位列表</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            添加单位
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</page-header>
+<nz-card>
+    <nz-row>
+        <nz-row>
+            <form nz-form #f="ngForm" se-container="2">
+                <se-title>工商信息</se-title>
+                <se label="单位全称" error="请输入单位全称!" required>
+                    <input nz-input type="text" placeholder="请输入单位全称" [(ngModel)]="data.orgName" name="orgName" />
+                </se>
+
+                <se label="信用代码" error="请输入信用代码!">
+                    <input nz-input type="text" placeholder="请输入信用代码" [(ngModel)]="data.certSerial" name="certSerial" />
+                </se>
+                <se label="单位电话" error="请输入单位电话!">
+                    <input nz-input type="text" placeholder="请输入单位电话" [(ngModel)]="data.tel" name="tel" />
+                </se>
+                <se label="企业种类">
+                    <nz-select style="min-width: 80px;" nzPlaceHolder="选择企业种类" [(ngModel)]="data.ownershipType" name="ownershipType">
+                        <nz-option *ngFor="let item of orgTypeArr" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </se>
+                <se label="所属辖区" col="1">
+                    <location-select [locationInfo]="location" [sizes]="6" (onLocationSelect)="onLocationSelect($event)">
+                    </location-select>
+                </se>
+                <!-- <se label="单位地址" col="1">
+                    <input nz-input type="text" placeholder="请输入单位地址" [(ngModel)]="data.address" name="address" />
+                </se> -->
+                <se label="详细地址" col="1" required>
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="width:50%">
+                        <input nz-input type="text" placeholder="请输入单位地址" [(ngModel)]="data.address" name="address" />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                        <button nz-button nzType="primary" (click)="showMap()" nzSearch>
+                          <svg viewBox="64 64 896 896" focusable="false" fill="currentColor" width="1em" height="1em" data-icon="environment" aria-hidden="true"><path d="M854.6 289.1a362.49 362.49 0 00-79.9-115.7 370.83 370.83 0 00-118.2-77.8C610.7 76.6 562.1 67 512 67c-50.1 0-98.7 9.6-144.5 28.5-44.3 18.3-84 44.5-118.2 77.8A363.6 363.6 0 00169.4 289c-19.5 45-29.4 92.8-29.4 142 0 70.6 16.9 140.9 50.1 208.7 26.7 54.5 64 107.6 111 158.1 80.3 86.2 164.5 138.9 188.4 153a43.9 43.9 0 0022.4 6.1c7.8 0 15.5-2 22.4-6.1 23.9-14.1 108.1-66.8 188.4-153 47-50.4 84.3-103.6 111-158.1C867.1 572 884 501.8 884 431.1c0-49.2-9.9-97-29.4-142zM512 880.2c-65.9-41.9-300-207.8-300-449.1 0-77.9 31.1-151.1 87.6-206.3C356.3 169.5 431.7 139 512 139s155.7 30.5 212.4 85.9C780.9 280 812 353.2 812 431.1c0 241.3-234.1 407.2-300 449.1zm0-617.2c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm79.2 255.2A111.6 111.6 0 01512 551c-29.9 0-58-11.7-79.2-32.8A111.6 111.6 0 01400 439c0-29.9 11.7-58 32.8-79.2C454 338.6 482.1 327 512 327c29.9 0 58 11.6 79.2 32.8C612.4 381 624 409.1 624 439c0 29.9-11.6 58-32.8 79.2z"></path></svg>
+                        </button>
+                    </ng-template>
+                </se>
+                <se label="单位法人">
+                    <input nz-input type="text" placeholder="请输入单位法人" [(ngModel)]="data.legalPerson" name="legalPerson" />
+                </se>
+                <!-- <se label="法人电话" required>
+                    <input nz-input type="text" placeholder="请输入法人电话" [(ngModel)]="data.tel" name="tel" />
+                </se> -->
+                <se label="所属行业">
+                    <nz-select style="min-width: 80px;" nzPlaceHolder="选择所属行业" [(ngModel)]="data.industry" name="industry">
+                        <nz-option *ngFor="let item of industryArr" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </se>
+                <se label="物业类型">
+                    <nz-select style="min-width: 80px;" nzPlaceHolder="选择物业类型" [(ngModel)]="data.industryCategory" name="industryCategory">
+                        <nz-option *ngFor="let item of industryCategoryArr" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </se>
+                <!-- <se label="营业执照">
+                    <button nz-button nzType="primary">查看</button>
+                </se> -->
+                <se label="营业状态">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择服务状态" name="businessStatus" [(ngModel)]="data.businessStatus">
+                        <nz-option nzLabel="正常" nzValue="1"></nz-option>
+                        <nz-option nzLabel="停业" nzValue="2"></nz-option>
+                        <nz-option nzLabel="装修" nzValue="3"></nz-option>
+                    </nz-select>
+                </se>
+                <!-- </se-container> -->
+                <se-title>服务信息</se-title>
+                <!-- <se label="单位编号">
+								<input nz-input type="text" placeholder="请输入单位简称" [(ngModel)]="data.orgShortName" name="orgShortName" />
+							</se> -->
+                <se label="单位简称" error="请输入单位简称!">
+                    <input nz-input type="text" placeholder="请输入单位简称" [(ngModel)]="data.orgShortName" name="orgShortName" />
+                </se>
+                <se label="运营中心" required>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="选择运营中心" name="operateId" [(ngModel)]="data.operateId">
+                        <nz-option *ngFor="let item of operationList" [nzLabel]="item.name" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </se>
+
+                <se label="推送规则" required>
+                    <nz-select nzShowSearch nzPlaceHolder="选择推送规则" name="operateId" [(ngModel)]="data.notifyRuleSetId">
+                        <nz-option *ngFor="let item of notifyRuleList" [nzLabel]="item.setName" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </se>
+
+                <se label="服务时间">
+                    <nz-range-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+                </se>
+                <se-title>图片信息</se-title>
+                <se label="联网单位Logo">
+                    <file-upload [fileList]="logoImg" [imgSize]="'1'" (fileListOut)="getLogoImg($event)"></file-upload>
+                </se>
+                <se label="营业执照图片">
+                    <file-upload [fileList]="certImage" [imgSize]="'1'" (fileListOut)="getCertImage($event)"></file-upload>
+                </se>
+                <se label="门头图片">
+                    <file-upload [fileList]="doorwayImages" [imgSize]="'5'" (fileListOut)="getDoorwayImages($event)"></file-upload>
+                </se>
+                <!-- <se col="1">
+                    <button nz-button nzType="primary" [disabled]="f.invalid">创建</button>
+                </se> -->
+                <se col="1" style="text-align: center;">
+                    <button nz-button nzType="primary" [disabled]="f.invalid" (click)="add()">确定</button>
+                    <button nz-button (click)="back()">返回</button>
+                </se>
+            </form>
+        </nz-row>
+
+    </nz-row>
+
+</nz-card>
+
+<div class="map-bg" [ngStyle]="{display:isShowMap}">
+    <div class="bgs">
+        <div class="map-container" [id]="containerId"></div>
+        <div class="input-card" style='width:600px;'>
+            <label style='color:grey'>点击地图获取地址信息</label>
+            <div class="input-item">
+                <div class="input-item-prepend"><span class="input-item-text">经纬度</span></div>
+                <span style="padding-left: 10px;">
+                        纬度:{{latEdit?latEdit:"未选择"}}, 经度:{{lngEdit?latEdit:"未选择"}}
+                    </span>
+            </div>
+            <div class="input-item">
+                <div class="input-item-prepend"><span class="input-item-text">地址</span></div>
+                <span style="padding-left: 10px;width: 600p;">
+                        {{data.address}}
+                    </span>
+            </div>
+            <div id="myPageTop">
+                <table>
+                    <tr>
+                        <td>
+                            <label>救援点(点击地图,搜索地址)</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="tipinput" style="width:500px;margin-bottom: 10px;" [(ngModel)]="inputAddress" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="btn-box">
+                <button nz-button (click)="sureAddress()">返回</button>
+                <button nz-button nzType="primary" (click)="sureAddress()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

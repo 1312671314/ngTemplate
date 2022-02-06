@@ -1,0 +1,47 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<nz-card>
+    <table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (editFuncOut)="editFun($event)" (pageIndexOut)="turnPage($event)"></table-template>
+</nz-card>
+
+
+<nz-modal [(nzVisible)]="isVisible" nzWidth="800px" nzTitle="操作" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" [formGroup]="validateForm" se-container="1">
+            <se label="姓名" error="请输入姓名!" required>
+                <input nz-input type="text" placeholder="请输入姓名" [(ngModel)]="account.name" formControlName="name" />
+            </se>
+            <se label="选择角色" required error="请选择角色!">
+                <nz-select style="min-width: 80px;" nzPlaceHolder="选择角色" [(ngModel)]="account.charactarId" formControlName="charactarId">
+                    <nz-option *ngFor="let item of charactarList" [nzLabel]="item.name" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </se>
+            <se label="手机号" error="请输入手机号!" required>
+                <input nz-input type="number" placeholder="请输入手机号" [(ngModel)]="account.phone" formControlName="phone" />
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleEdit" nzWidth="800px" nzTitle="操作" (nzOnCancel)="editCancel()" (nzOnOk)="editOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="姓名" error="请输入姓名!" required>
+                <input nz-input type="text" placeholder="请输入姓名" [(ngModel)]="editAccount.name" name="name" />
+            </se>
+            <se label="选择角色" required>
+                <nz-select style="min-width: 80px;" nzPlaceHolder="选择角色" [(ngModel)]="editAccount.charactarId" disabled name="charactarId">
+                    <nz-option *ngFor="let item of charactarList" [nzLabel]="item.name" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </se>
+            <se label="手机号" error="请输入手机号!" required>
+                <input nz-input type="number" placeholder="请输入手机号" [(ngModel)]="editAccount.phone" name="phone" disabled />
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>

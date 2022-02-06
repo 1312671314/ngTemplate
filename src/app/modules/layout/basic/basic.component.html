@@ -1,0 +1,82 @@
+<layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
+
+    <layout-default-header-item direction="middle">
+        <div style="color: #fff;font-size: 22px;font-weight: 400;text-align: center; margin: 0 auto;">
+            {{centerName}}
+        </div>
+    </layout-default-header-item>
+
+    <!-- <layout-default-header-item direction="middle">
+        <header-search class="alain-default__search" [(toggleChange)]="searchToggleStatus"></header-search>
+    </layout-default-header-item> -->
+
+    <layout-default-header-item direction="right">
+        <!-- <i nz-icon nzType="anticon-bulb"></i> -->
+        <notice-icon [count]="0" btnClass="alain-default__nav-item" btnIconClass="fullscreen" (click)="goMessage()"></notice-icon>
+    </layout-default-header-item>
+
+    <layout-default-header-item direction="right">
+        <!-- <header-notify></header-notify> -->
+        <!-- <header-fullscreen></header-fullscreen>-->
+        <span *ngIf="type != 'platform'" style="margin: 0 10px;">
+        <i class="anticon anticon-fund-projection-screen" style="font-size:18px;color:#fff;cursor: pointer;" (click)="showMap()"
+          ><svg
+            viewBox="64 64 896 896"
+            focusable="false"
+            fill="currentColor"
+            width="1em"
+            height="1em"
+            data-icon="fund-projection-screen"
+            aria-hidden="true"
+          >
+            <defs><style></style></defs>
+            <path
+              d="M312.1 591.5c3.1 3.1 8.2 3.1 11.3 0l101.8-101.8 86.1 86.2c3.1 3.1 8.2 3.1 11.3 0l226.3-226.5c3.1-3.1 3.1-8.2 0-11.3l-36.8-36.8a8.03 8.03 0 00-11.3 0L517 485.3l-86.1-86.2a8.03 8.03 0 00-11.3 0L275.3 543.4a8.03 8.03 0 000 11.3l36.8 36.8z"
+            ></path>
+            <path d="M904 160H548V96c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H120c-17.7 0-32 14.3-32 32v520c0 17.7 14.3 32 32 32h356.4v32L311.6 884.1a7.92 7.92 0 00-2.3 11l30.3 47.2v.1c2.4 3.7 7.4 4.7 11.1 2.3L512 838.9l161.3 105.8c3.7 2.4 8.7 1.4 11.1-2.3v-.1l30.3-47.2a8 8 0 00-2.3-11L548 776.3V744h356c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 512H160V232h704v440z"></path></svg></i>
+      </span>
+    </layout-default-header-item>
+    <layout-default-header-item direction="right" hidden="mobile">
+        <!-- <div layout-default-header-item-trigger nz-dropdown [nzDropdownMenu]="settingsMenu" nzTrigger="click" nzPlacement="bottomRight">
+        <i nz-icon nzType="setting"></i>
+      </div> -->
+        <!-- <nz-dropdown-menu #settingsMenu="nzDropdownMenu">
+        <div nz-menu style="width: 200px;">
+          <div nz-menu-item>
+            <header-rtl></header-rtl>
+          </div>
+          <div nz-menu-item>
+            <header-fullscreen></header-fullscreen>
+          </div>
+          <div nz-menu-item>
+            <header-clear-storage></header-clear-storage>
+          </div>
+          <div nz-menu-item>
+            <header-i18n></header-i18n>
+          </div>
+        </div>
+      </nz-dropdown-menu> -->
+    </layout-default-header-item>
+    <layout-default-header-item direction="right">
+        <header-user></header-user>
+    </layout-default-header-item>
+    <ng-template #asideUserTpl>
+        <!-- <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">
+            <nz-avatar class="alain-default__aside-user-avatar" [nzSrc]="user.avatar"></nz-avatar>
+            <div class="alain-default__aside-user-info">
+                <strong>{{ user.name }}</strong>
+            </div>
+        </div> -->
+        <nz-dropdown-menu #userMenu="nzDropdownMenu">
+            <ul nz-menu>
+                <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | i18n }}</li>
+                <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | i18n }}</li>
+            </ul>
+        </nz-dropdown-menu>
+    </ng-template>
+    <ng-template #contentTpl>
+        <router-outlet></router-outlet>
+    </ng-template>
+</layout-default>
+<!-- <setting-drawer *ngIf="showSettingDrawer"></setting-drawer>
+  <theme-btn></theme-btn> -->

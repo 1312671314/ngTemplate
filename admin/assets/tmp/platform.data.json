@@ -1,0 +1,110 @@
+{
+    "app": {
+        "name": "Alain",
+        "description": "Ng-zorro admin panel front-end framework"
+    },
+    "user": {
+        "name": "Admin",
+        "avatar": "./assets/tmp/img/avatar.jpg",
+        "email": "cipchk@qq.com"
+    },
+    "menu": [{
+            "text": "主导航",
+            "i18n": "menu.main",
+            "group": false,
+            "hideInBreadcrumb": true,
+            "children": [{
+                    "text": "首页",
+                    "icon": "anticon-dashboard",
+                    "children": [{
+                        "text": "运营概览",
+                        "link": "/platform/dashboard/v1"
+                    }]
+                },
+                {
+                    "text": "警情管理",
+                    "icon": "anticon-bulb",
+                    "children": [{
+                        "text": "实时警情",
+                        "link": "/platform/vigilance/real-time"
+                    }, {
+                        "text": "故障处理",
+                        "link": "/platform/vigilance/fault"
+                    }, {
+                        "text": "设备恢复",
+                        "link": "/platform/vigilance/renew"
+                    }, {
+                        "text": "历史记录",
+                        "link": "/platform/vigilance/history"
+                    }]
+                },
+                {
+                    "text": "设备管理",
+                    "icon": "anticon-appstore",
+                    "children": [{
+                            "text": "初装设备认领",
+                            "link": "/platform/equipment/unbindEquipment"
+                        },
+                        {
+                            "text": "系统设备列表",
+                            "link": "/platform/equipment/wireless"
+                        },
+                        {
+                            "text": "消防视频管理",
+                            "link": "/platform/equipment/video"
+                        }
+                    ]
+                },
+                {
+                    "text": "单位管理",
+                    "icon": "anticon-user",
+                    "link": "/platform/org"
+                },
+                {
+                    "text": "商务合同",
+                    "icon": "anticon-profile",
+                    "children": [{
+                        "text": "合同列表",
+                        "link": "/platform/business"
+                    }]
+                },
+                {
+                    "text": "救援力量",
+                    "icon": "anticon-profile",
+                    "link": "/platform/rescuer"
+                },
+                {
+                    "text": "系统设置",
+                    "icon": "anticon-setting",
+                    "children": [{
+                            "text": "账号管理",
+                            "link": "/platform/setting/account"
+                        },
+                        {
+                            "text": "运营中心",
+                            "link": "/platform/operation"
+                        },
+                        {
+                            "text": "字典维护",
+                            "link": "/platform/setting/dictionaries"
+                        },
+                        {
+                            "text": "推送设置",
+                            "link": "/platform/setting/notice"
+                        },
+                        {
+                            "text": "操作日志",
+                            "link": "/platform/setting/diary"
+                        },
+                        {
+                            "text": "消息中心",
+                            "link": "/platform/setting/message"
+                        }
+                    ]
+                }
+
+            ]
+        }
+
+    ]
+}

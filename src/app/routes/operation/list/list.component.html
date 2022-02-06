@@ -1,0 +1,47 @@
+<page-header [action]="phActionTpl">
+    <ng-template #phActionTpl>
+        <button (click)="add()" nz-button nzType="primary">新建</button>
+    </ng-template>
+</page-header>
+<table-template [dataList]="dataSet" [theadList]="teadList" [total]="total" [pageIndex]="pageIndex" [keyNameList]="keyNameList" [pageSize]="pageSize" (pageIndexOut)="turnPage($event)" (editFuncOut)="editFun($event)"></table-template>
+
+<nz-modal [(nzVisible)]="isVisible" nzWidth="1000px" nzTitle="操作" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <se label="运营中心名称" error="请输入运营中心名称!" required>
+                <input nz-input type="text" placeholder="请输入运营中心名称" [(ngModel)]="operation.name" name="name" />
+            </se>
+            <se label="选择省市区地区" error="选择省市区!" required>
+                <location-select [locationInfo]="location" [sizes]="8" (onLocationSelect)="onLocationSelect($event)">
+                </location-select>
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisibleAccountList" nzWidth="1000px" nzTitle="运营中心子账号" [nzFooter]="null" (nzOnCancel)="onCancel()">
+    <ng-container *nzModalContent>
+        <table-template [dataList]="dataSet2" [theadList]="teadList2" [total]="total2" [pageIndex]="pageIndex2" [keyNameList]="keyNameList2" [pageSize]="pageSize2" (editFuncOut)="editFun2($event)"></table-template>
+    </ng-container>
+</nz-modal>
+
+<!-- 运营中心子账号 -->
+<nz-modal [(nzVisible)]="isVisibleAccount" nzWidth="800px" [nzTitle]="addTitle" (nzOnCancel)="addCancel()" (nzOnOk)="addOk()">
+    <ng-container *nzModalContent>
+        <form nz-form #f="ngForm" se-container="1">
+            <!-- <se-title>{{editItem2.name}}</se-title> -->
+            <se label="姓名" error="请输入姓名!" required>
+                <input nz-input type="text" placeholder="请输入姓名" [(ngModel)]="addAccount.name" name="name" />
+            </se>
+            <se label="选择角色" required>
+                <nz-select style="min-width: 80px;" nzPlaceHolder="选择角色" [(ngModel)]="addAccount.charactarId" name="charactarId">
+                    <nz-option *ngFor="let item of charactarList" [nzLabel]="item.name" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </se>
+            <se label="手机号" error="请输入手机号!" required>
+                <input nz-input type="number" placeholder="请输入手机号" [(ngModel)]="addAccount.phone" name="phone" />
+            </se>
+        </form>
+    </ng-container>
+</nz-modal>
